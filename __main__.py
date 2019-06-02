@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 import requests
 import json
+import logging
 
 import settings as SETTINGS
 
@@ -74,10 +75,13 @@ def your_restaurants(temp):
     url = "https://www.daveb.cz/cs/denni-nabidka"
     selector = ".article .row div"
     weekday = 3 + datetime.today().weekday()
-    weekday = weekday if int(weekday) <= 7 else 3
+    weekday = weekday if int(weekday) <= 7 else 7
     temp.add_menu(name, url, selector, n=weekday)
 
 if __name__ == "__main__":
+    logging.info("Executing..")
     x = lunchScraper()
     your_restaurants(x)
-    x.send_message()
+    result = x.send_message()
+    print("[{}] Execution completed with {}.".format(datetime.now(), result) )
+    logging.info("Done.")
