@@ -77,11 +77,15 @@ def your_restaurants(temp):
     weekday = 3 + datetime.today().weekday()
     weekday = weekday if int(weekday) <= 7 else 7
     temp.add_menu(name, url, selector, n=weekday)
+    
+    # Potrefena Husa - Na Verandach
+    name = "Potrefena Husa - Na Verandach"
+    url = "https://www.phnaverandach.cz/"
+    selector = ".listek-out .listek #table-1 .food-title"
+    temp.add_menu(name, url, selector, n=-1)
 
 if __name__ == "__main__":
-    logging.info("Executing..")
     x = lunchScraper()
     your_restaurants(x)
     result = x.send_message()
     print("[{}] Execution completed with {}.".format(datetime.now(), result) )
-    logging.info("Done.")
