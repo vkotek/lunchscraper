@@ -107,7 +107,7 @@ def your_restaurants(temp):
     temp.add_menu(name, url, selector, n=range(0,3))
 
     # Lavande Restaurant - Daily
-    name = "Lavande Restaurant - Week"
+    name = "Lavande Restaurant - Daily"
     url = "https://restaurantlavande.cz/menu/#week-menu"
     weekday = datetime.today().weekday()
     weekday = weekday if weekday < 5 else 4
