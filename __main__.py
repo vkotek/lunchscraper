@@ -59,6 +59,9 @@ class lunchScraper(object):
             for subscriber in subscribers:
                 recipients.append(subscriber['email'])
         return recipients
+    
+def clean(string):
+    return "".join([char for char in string if char.isalnum() or char == " "])
 
 def your_restaurants(temp):
 
