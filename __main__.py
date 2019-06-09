@@ -10,7 +10,7 @@ import logging
 import settings as SETTINGS
 
 class lunchScraper(object):
-    
+
     def __init__(self):
         self.data = {
             "title": "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
@@ -18,7 +18,7 @@ class lunchScraper(object):
                 "menus": []
             }
         }
-        
+
     def add_menu(self, name, url, selector, n=0):
         try:
             with request.urlopen(url) as response:
@@ -38,7 +38,7 @@ class lunchScraper(object):
         auth = ("api", SETTINGS.MAIL_API_KEY)
         data = {
             "from": SETTINGS.FROM,
-            "to": SETTINGS.TO,
+            "to": self.get_recipients(SETTINGS.SUBSCRIBERS),
             "subject": self.data['title'],
             "h:X-Mailgun-Variables": json.dumps(self.data),
             "t:text": "yes",
@@ -46,7 +46,15 @@ class lunchScraper(object):
         }
         r = requests.post(SETTINGS.MAIL_URL, auth=auth, data=data)
         return r
-    
+
+    def get_recipients(self, path_to_json):
+        with open(path_to_json, 'r') as f:
+            subscribers = json.load(f)
+            recipients = []
+            for subscriber in subscribers:
+                recipients.append(subscriber['email'])
+        return recipients
+
 def your_restaurants(temp):
 
     # Pastva
@@ -77,7 +85,7 @@ def your_restaurants(temp):
     weekday = 3 + datetime.today().weekday()
     weekday = weekday if int(weekday) <= 7 else 7
     temp.add_menu(name, url, selector, n=weekday)
-    
+
     # Potrefena Husa - Na Verandach
     name = "Potrefena Husa - Na Verandach"
     url = "https://www.phnaverandach.cz/"

@@ -6,4 +6,5 @@ MAIL_API_KEY = "key-XXXXXXXXXXXXXXXXXXXXXXXXXX"
 TO = [
     'your.recipient@gmail.com',
 ]
+SUBSCRIBERS = "/path/to/subscribers.json"
 FROM = "YOUR NAME <your@email.com>"
