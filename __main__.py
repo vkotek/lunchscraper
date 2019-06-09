@@ -27,6 +27,11 @@ class lunchScraper(object):
                 selected = soup.select(selector)
                 if n == -1:
                     text = "\n".join([item.get_text() for item in selected])
+                elif isinstance(n, range):
+                    text = []
+                    for i in n:
+                        text.append( clean(selected[i].get_text()) )
+                    text = "\n".join(text)
                 else:
                     text = selected[n].get_text()
                 text = [t for t in text.split("\n") if len(t) > 0]
@@ -91,6 +96,21 @@ def your_restaurants(temp):
     url = "https://www.phnaverandach.cz/"
     selector = ".listek-out .listek #table-1 .food-title"
     temp.add_menu(name, url, selector, n=-1)
+
+    # Lavande Restaurant - Weekly
+    name = "Lavande Restaurant - Week"
+    url = "https://restaurantlavande.cz/menu/#week-menu"
+    selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
+    temp.add_menu(name, url, selector, n=range(0,3))
+
+    # Lavande Restaurant - Daily
+    name = "Lavande Restaurant - Week"
+    url = "https://restaurantlavande.cz/menu/#week-menu"
+    weekday = datetime.today().weekday()
+    weekday = weekday if weekday < 5 else 4
+    n = (( weekday + 1) * 4) - 1
+    selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
+    temp.add_menu(name, url, selector, n=range(n,n+4))
 
 if __name__ == "__main__":
     x = lunchScraper()
