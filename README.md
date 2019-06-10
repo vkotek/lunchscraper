@@ -12,6 +12,7 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ### 2019-06-10 v1.1
 - Self sign-up with email verification on web.kotek.co/subscription
+- Subscribers are now managed in an external JSON file, path is specified in settings.py.
 - Backend preparations for preference management
 - Added Lavande restaurant
 
