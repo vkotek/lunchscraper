@@ -18,4 +18,4 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ### 2019-06-03 v1.0
 - lunchScraper is launched to the public.
-- Added u Kroka on request
+- Added Potrefena Husa - Na Verandach on request
