@@ -2,6 +2,8 @@
 
 Collects daily menu information from nearby restaurants and delivers it to your email every day at 11:00.
 
+Sign up on https://web.kotek.co/subscription.
+
 This code is created and managed by Vojtech Kotek. Suggestions for improvements are welcome.
 
 ## Changelog
