@@ -40,18 +40,19 @@ class lunchScraper(object):
             print("Couldn't find menu for {}. Error: {}".format(name, e))
 
     def send_messages(self):
-        
+
         recipients = self.get_recipients()
-        
+
         auth = ("api", SETTINGS.MAIL_API_KEY)
         results = {}
-        
+
         for recipient in recipients:
             menus = [r for r in self.data['body']['menus'] if str(r['id']) in recipient['preferences']]
-            data = { 'body': { 
+            data = { 'body': {
                 'menus': menus,
                 'token': recipient['token'],
-            }}
+            }, 'title': self.data['title'],
+            }
             config = {
                 "from": SETTINGS.FROM,
                 "to": recipient['email'],
@@ -61,7 +62,7 @@ class lunchScraper(object):
                 "template": "daily-menu",
             }
             r = requests.post(SETTINGS.MAIL_URL, auth=auth, data=config)
-            
+
         return True
 
     def get_recipients(self):
