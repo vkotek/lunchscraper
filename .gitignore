@@ -105,3 +105,6 @@ venv.bak/
 
 # settings
 settings.py
+
+# Custom
+*-dev.ipynb

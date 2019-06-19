@@ -131,7 +131,14 @@ def your_restaurants(temp):
     n = (( weekday + 1) * 4) - 1
     selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
     temp.add_menu(id, name, url, selector, n=range(n,n+4))
-
+    
+    # Prostor
+    id = 6
+    name = "Prostor"
+    url = "http://www.prostor.je"
+    selector = "#daily-menu ul"
+    temp.add_menu(id, name, url, selector, n=-1)
+    
 if __name__ == "__main__":
     x = lunchScraper()
     your_restaurants(x)
