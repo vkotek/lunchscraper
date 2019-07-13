@@ -1,9 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  {% block head %}
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Oxygen Confirm</title>
+  <title>{% block title %}{{ data.title }}{% endblock %} - KOTEK.CO</title>
 
   <style type="text/css">
     /* Take care of image borders and formatting, client hacks */
@@ -107,6 +108,11 @@
       padding: 12px 15px 15px;
       text-align: left;
       width: 253px;
+    }
+
+    .mini-container-full {
+      width: 556px;
+      padding: 10px 0 10px 15px;
     }
 
     .mini-container-left {
@@ -264,6 +270,7 @@
       }
     }
   </style>
+  {% endblock %}
 </head>
 
 <body bgcolor="#f7f7f7">
@@ -284,7 +291,7 @@
                 <table cellpadding="0" cellspacing="0" width="600" class="w320">
                   <tr>
                     <td class="pull-left mobile-header-padding-left" style="vertical-align: middle;">
-                      <a href=""><img width="137" height="47" src="http://s3.amazonaws.com/swu-filepicker/0zxBZVuORSxdc9ZCqotL_logo_03.gif" alt="logo"></a>
+                      <a href=""><img width="137" height="47" src="https://web.kotek.co/static/logo.png" alt="logo"></a>
                     </td>
                     <td class="pull-right mobile-header-padding-right" style="color: #4d4d4d;">
                       <a href=""><img width="44" height="47" src="http://s3.amazonaws.com/swu-filepicker/k8D8A7SLRuetZspHxsJk_social_08.gif" alt="twitter" /></a>
@@ -307,63 +314,36 @@
   <tr>
     <td align="center" valign="top" width="100%" style="background-color: #f7f7f7;" class="content-padding">
       <center>
+        {% block body %}
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
+          {% if data.notice %}
           <tr>
             <td class="header-lg">
-              Your order has shipped!
+              {{ data.notice.title }}
             </td>
           </tr>
           <tr>
             <td class="free-text">
-              We wanted to let you know that we just shipped off your order <a href="">#23141</a>. You'll find all the details below.
+              {{ data.notice.text }}
             </td>
           </tr>
-          <tr>
-            <td class="button">
-              <div><!--[if mso]>
-                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://" style="height:45px;v-text-anchor:middle;width:155px;" arcsize="15%" strokecolor="#ffffff" fillcolor="#ff6f6f">
-                  <w:anchorlock/>
-                  <center style="color:#ffffff;font-family:Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;">Track Order</center>
-                </v:roundrect>
-              <![endif]--><a href="http://"
-              style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:'Cabin', Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">Track Order</a></div>
-            </td>
-          </tr>
+          {% endif %}
           <tr>
             <td class="w320">
               <table cellpadding="0" cellspacing="0" width="100%">
+                {% for menu in data.menus %}
                 <tr>
-                  <td class="mini-container-left">
+                  <td class="mini-container-full">
                     <table cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                         <td class="mini-block-padding">
                           <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:separate !important;">
                             <tr>
                               <td class="mini-block">
-                                <span class="header-sm">Shipping Address</span><br />
-                                Jane Doe <br />
-                                123 Street <br />
-                                Victoria, BC <br />
-                                Canada
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td class="mini-container-right">
-                    <table cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td class="mini-block-padding">
-                          <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:separate !important;">
-                            <tr>
-                              <td class="mini-block">
-                                <span class="header-sm">Date Shipped</span><br />
-                                January 12, 2015 <br />
-                                <br />
-                                <span class="header-sm">Order</span> <br />
-                                #12342
+                                <span class="header-sm"><a href="{{ menu.url }}">{{ menu.name }}</a></span><br />
+                                {% for item in menu['menu'] %}
+                                {{ item }}<br />
+                                {% endfor %}
                               </td>
                             </tr>
                           </table>
@@ -372,107 +352,19 @@
                     </table>
                   </td>
                 </tr>
+                {% endfor %}
               </table>
             </td>
           </tr>
         </table>
+        {% endblock %}
       </center>
     </td>
   </tr>
-  <tr>
+      <tr style="display:none;">
     <td align="center" valign="top" width="100%" style="background-color: #ffffff;  border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5;">
       <center>
-        <table cellpadding="0" cellspacing="0" width="600" class="w320">
-            <tr>
-              <td class="item-table">
-                <table cellspacing="0" cellpadding="0" width="100%">
-                  <tr>
-                    <td class="title-dark" width="300">
-                       Item
-                    </td>
-                    <td class="title-dark" width="163">
-                      Qty
-                    </td>
-                    <td class="title-dark" width="97">
-                      Total
-                    </td>
-                  </tr>
 
-
-                  <tr>
-                    <td class="item-col item">
-                      <table cellspacing="0" cellpadding="0" width="100%">
-                        <tr>
-                          <td class="mobile-hide-img">
-                            <img width="110" height="92" src="http://s3.amazonaws.com/swu-filepicker/RPezUIwPRv8pjatAAH1E_item_images_19.jpg" alt="item1">
-                          </td>
-                          <td class="product">
-                            <span style="color: #4d4d4d; font-weight:bold;">Golden Earings</span> <br />
-                            Hot city looks
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td class="item-col quantity">
-                      1
-                    </td>
-                    <td class="item-col">
-                      $2.52
-                    </td>
-                  </tr>
-
-
-                  <tr>
-                    <td class="item-col item">
-                      <table cellspacing="0" cellpadding="0" width="100%">
-                        <tr>
-                          <td class="mobile-hide-img">
-                            <img width="110" height="92" src="http://s3.amazonaws.com/swu-filepicker/9wRy50HQTg2CTyZA5Ozi_item_images_16.jpg" alt="item2">
-                          </td>
-                          <td class="product">
-                            <span style="color: #4d4d4d; font-weight: bold;">Pink Shoes</span> <br />
-                            Newest styles
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td class="item-col quantity">
-                      1
-                    </td>
-                    <td class="item-col price">
-                      $10.50
-                    </td>
-                  </tr>
-
-
-                  <tr>
-                    <td class="item-col item mobile-row-padding"></td>
-                    <td class="item-col quantity"></td>
-                    <td class="item-col price"></td>
-                  </tr>
-
-
-                  <tr>
-                    <td class="item-col item">
-                    </td>
-                    <td class="item-col quantity" style="text-align:right; padding-right: 10px; border-top: 1px solid #cccccc;">
-                      <span class="total-space">Subtotal</span> <br />
-                      <span class="total-space">Tax</span>  <br />
-                      <span class="total-space">Shipping</span> <br />
-                      <span class="total-space" style="font-weight: bold; color: #4d4d4d">Total</span>
-                    </td>
-                    <td class="item-col price" style="text-align: left; border-top: 1px solid #cccccc;">
-                      <span class="total-space">$13.02</span> <br />
-                      <span class="total-space">$0.75</span>  <br />
-                      <span class="total-space">$1.00</span>  <br />
-                      <span class="total-space" style="font-weight:bold; color: #4d4d4d">$15.77</span>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-
-        </table>
       </center>
     </td>
   </tr>
@@ -482,9 +374,11 @@
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
           <tr>
             <td style="padding: 25px 0 25px">
-              <strong>Awesome Inc</strong><br />
-              1234 Awesome St <br />
-              Wonderland <br /><br />
+              {% block footer %}
+              <strong>Check out the code repository on GitHub</strong><br />
+              Click <a href="{{ data.recipient.url }}">here to manage preferences</a> for {{ data.recipient.email }}.<br />
+                Feedback is welcome, simply reply to this email!<br /><br />
+              {% endblock %}
             </td>
           </tr>
         </table>
@@ -492,6 +386,5 @@
     </td>
   </tr>
 </table>
-</div>
 </body>
 </html>

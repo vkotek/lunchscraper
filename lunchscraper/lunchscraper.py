@@ -3,11 +3,15 @@
 from urllib import request
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
+from jinja2 import Template
 import requests
 import json
 import logging
-
 import settings as SETTINGS
+from lunchscraper import controller
+
+base_url = "https://web.kotek.com/lunch-scraper"
+
 
 class lunchScraper(object):
 
@@ -18,8 +22,26 @@ class lunchScraper(object):
                 "menus": []
             }
         }
+        self.menus = []
+        self.settings = SETTINGS
 
     def add_menu(self, id, name, url, selector, n=0):
+        """
+        id       :: id of the restaurant, used for grouping and hiding restaurants.
+        name     :: name of the restaurant
+        url      :: the URL where the menu can be found
+        selector :: CSS selector to find menu on page
+        n        :: specifies how to handle results
+        
+        n = 0 [DEFAULT]
+        Gets the first element in the response.
+        
+        n = -1
+        Combines the text in all found elements.
+        
+        n = range(x, y)
+        Fetches tech from elements x through y from the response."""
+        
         try:
             with request.urlopen(url) as response:
                 html = response.read()
@@ -36,6 +58,7 @@ class lunchScraper(object):
                     text = selected[n].get_text()
                 text = [t for t in text.split("\n") if len(t) > 0]
             self.data['body']['menus'].append({'id':id,'name':name,'url':url,'menu':text})
+            self.menus.append({'id':id,'name':name,'url':url,'menu':text})
         except Exception as e:
             print("Couldn't find menu for {}. Error: {}".format(name, e))
 
@@ -43,7 +66,7 @@ class lunchScraper(object):
 
         recipients = self.get_recipients()
 
-        auth = ("api", SETTINGS.MAIL_API_KEY)
+        auth = ("api", self.settings.MAIL_API_KEY)
         results = {}
 
         for recipient in recipients:
@@ -54,21 +77,77 @@ class lunchScraper(object):
             }, 'title': self.data['title'],
             }
             config = {
-                "from": SETTINGS.FROM,
+                "from": self.settings.FROM,
                 "to": recipient['email'],
                 "subject": self.data['title'],
                 "h:X-Mailgun-Variables": json.dumps(data),
                 "t:text": "yes",
                 "template": "daily-menu",
             }
-            r = requests.post(SETTINGS.MAIL_URL, auth=auth, data=config)
+            r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
 
         return True
 
+    def send_messages_html(self):
+    
+        auth = ("api", self.settings.MAIL_API_KEY)
+        
+        notice = {
+            'title': "New template format!",
+            'text': "There were some significant changes on the backend this weekend, but the one change that you will most likely notice is that there is a new email style. Hope you like it! For the full list of changes, including some exciting features like automated testing and continuous integration, check out the project on GitHub!",
+        }
+
+        for recipient in self.get_recipients():
+            
+            # Get menus for preferences of given user
+            menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
+            
+            data = {
+                'title': "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
+                'notice': notice,
+                'recipient': {
+                    'email': "email@email.com",
+                    'url': base_url + "/?token=" + recipient['token'],
+                },
+                'menus': menus,
+            }   
+            
+            # Generate html email template for user with given data
+            email_html = self.render_email('master.html', data)
+            
+            config = {
+                "from": self.settings.FROM,
+                #"to": recipient['email'],
+                "to": "kotek.vojtech@gmail.com",
+                "subject": self.data['title'],
+                "html": email_html,
+            }
+            r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
+
+        return True
+    
+    def send_message(self):
+        return True
+    
     def get_recipients(self):
-        with open(SETTINGS.SUBSCRIBERS, 'r') as f:
+        
+        file = self.settings.SUBSCRIBERS
+        
+        with open(file, 'r') as f:
             subscribers = json.load(f)
         return subscribers
+    
+    def render_email(self, template, data):
+        
+        with open("templates/"+template, 'r') as html:
+            html = html.read()
+            template = Template(html)
+            html = template.render(data=data)
+        
+        return html
+    
+    def scrape_restaurants(self):
+        your_restaurants(self)
 
 def clean(string):
     return "".join([char for char in string if char.isalnum() or char == " "])
@@ -141,6 +220,6 @@ def your_restaurants(temp):
     
 if __name__ == "__main__":
     x = lunchScraper()
-    your_restaurants(x)
-    result = x.send_messages()
-    print("[{}] Execution completed with {}.".format(datetime.now(), result) )
+    #your_restaurants(x)
+    #result = x.send_messages()
+    #print("[{}] Execution completed with {}.".format(datetime.now(), result) )
