@@ -9,8 +9,10 @@ import json
 import logging
 import settings as SETTINGS
 from lunchscraper import controller
+import os
 
 base_url = "https://web.kotek.com/lunch-scraper"
+SETTINGS.SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 
 
 class lunchScraper(object):
