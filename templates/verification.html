@@ -175,10 +175,6 @@
       line-height: 1px !important;
       font-size: 1px !important;
     }
-    
-    .notice {
-      padding-bottom: 1em;
-    }
 
   </style>
 
@@ -319,7 +315,7 @@
         {% block body %}
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
           {% if data.notice %}
-          <tr class="notice">
+          <tr>
             <td class="header-lg">
               {{ data.notice.title }}
             </td>
@@ -330,36 +326,6 @@
             </td>
           </tr>
           {% endif %}
-          <tr>
-            <td class="w320">
-              <table cellpadding="0" cellspacing="0" width="100%">
-                {% for menu in data.menus %}
-                <tr>
-                  <td class="mini-container-full">
-                    <table cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td class="mini-block-padding">
-                          <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:separate !important;">
-                            <tr>
-                              <td class="mini-block">
-                                <span class="header-sm"><a href="{{ menu.url }}">{{ menu.name }}</a></span><br />
-                                  <ul>
-                                    {% for item in menu['menu'] %}
-                                      <li>{{ item }}</li>
-                                    {% endfor %}
-                                  </ul>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                {% endfor %}
-              </table>
-            </td>
-          </tr>
         </table>
         {% endblock %}
       </center>

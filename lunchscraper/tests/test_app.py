@@ -1,4 +1,4 @@
-from lunchscraper import lunchscraper
+import lunchscraper
 
 def test_controller_user_add():
     Object = lunchscraper.controller.User()
@@ -17,20 +17,20 @@ def test_controller_user_get():
     assert len(result) == 2
 
 def test_app_get_recipients():
-    Object = lunchscraper.lunchScraper()
+    Object = lunchscraper.lunchscraper.lunchScraper()
     result = Object.get_recipients()
     
     assert type(result) == list and type(result[0]) == dict
 
 def test_app_add_menu():
-    Object = lunchscraper.lunchScraper()
+    Object = lunchscraper.lunchscraper.lunchScraper()
     Object.scrape_restaurants()
     result = Object.menus
     
     assert type(result) == list and len(result) > 1
     
 def test_app_send_message():
-    Object = lunchscraper.lunchScraper()
+    Object = lunchscraper.lunchscraper.lunchScraper()
     Object.scrape_restaurants()
     
     Users = lunchscraper.controller.User()
@@ -43,7 +43,7 @@ def test_app_send_message():
     assert result == True and verification == True
     
 def test_app_render_email():
-    Object = lunchscraper.lunchScraper()
+    Object = lunchscraper.lunchscraper.lunchScraper()
     menus = [
         {
             'name': "TEST RESTAURANT ONE",

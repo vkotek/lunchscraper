@@ -5,32 +5,28 @@ import random
 from datetime import datetime
 import requests
 import settings as SETTINGS
+import os
 
 class User(object):
 
-    def __init__(self, message=None, file=None):
-        
-        if message:
-            print(message)
-        
+    def __init__(self, file=None):
+
         if file:
             self.subscribers_file = file
         else:
             self.subscribers_file = SETTINGS.SUBSCRIBERS
-            
+
         with open(self.subscribers_file, 'r+') as f:
             try:
                 self.users = json.load(f)
             except Exception as e:
-                print("Unable to open file, creating blank database")
                 self.users = []
                 self.save()
-        print("Working with User object in: ", self.subscribers_file)
 
-    def reload(self, message=None):
-        self.__init__(message)
+    def reload(self):
+        self.__init__()
 
-    def add(self, email):
+    def add(self, email, verify=False):
         if self.exists(email=email):
             return False
 
@@ -49,14 +45,17 @@ class User(object):
 
         self.users.append(new_user)
         self.save()
-        self.email_verification(new_user['uuid'])
-        
+
+        if verify:
+            self.verify( new_user['token'] )
+        else:
+            self.email_verification(new_user['uuid'])
+
         return new_user
 
     def get(self, uuid=None, email=None, token=None):
         if not uuid and not email and not token:
             return self.users
-            return False
         for user in self.users:
             if user['uuid'] == uuid or user['email'] == email or user['token'] == token:
                 return user
@@ -68,7 +67,7 @@ class User(object):
     def save(self):
         with open(self.subscribers_file, 'w') as f:
             json.dump(self.users, f)
-        self.reload("Reloading after saving to database.")
+        self.reload()
         return True
 
     def update_preferences(self, token, new_preferences):
@@ -81,12 +80,12 @@ class User(object):
         return False
 
     def email_verification(self, uuid):
-        
+
         user = self.get(uuid=uuid)
-        
+
         if not user: # User not found
             return False
-        
+
         return requests.post(
             SETTINGS.MAIL_URL,
             auth=("api", SETTINGS.MAIL_API_KEY),
@@ -96,6 +95,39 @@ class User(object):
                 "template": "email_verification",
                 "h:X-Mailgun-Variables": json.dumps(user),
                  })
+
+    def email_verification_html(self, uuid):
+
+        user = self.get(uuid=uuid)
+
+        if not user: # User not found
+            return False
+
+        data = {
+            'title': "Please verify your email",
+            'notice': {
+                'title': "One last step..",
+                'text': "Thank you for subscribing to the lunchScraper! Once you verify your email by clicking the button below, you will start to receive the daily menu for the restaurants in the area every day at 11AM.",
+                'button': {
+                    'url': SETTINGS.URL + "/verify?token=" + user['token'],
+                    'text': "Verify", },
+            },
+            'recipient': {
+                'email': recipient['email'],
+                'url': SETTINGS.URL + "/?token=" + recipient['token'],
+            },
+        }
+
+        html = Email().render_template("verification", data)
+
+        config = {
+            "from": self.settings.FROM,
+            "to": recipient['email'],
+            "subject": self.data['title'],
+            "html": html,
+        }
+
+        return Emailer().send_html(config, html)
 
     def update(self, uuid, option, value):
         for i, user in enumerate(self.users):
@@ -125,7 +157,7 @@ class User(object):
 
     def exists(self, email=None, uuid=None):
         """Check whether the given user exists."""
-        self.reload("Reloading prior to checking if user exists")
+        self.reload()
         for user in self.users:
             if user['email'] == email or user['uuid'] == uuid:
                 return True
@@ -144,7 +176,7 @@ class User(object):
         for char in range(length):
             chars.append(random.choice(ALPHABET))
         return "".join(chars)
-    
+
     def add_restaurant_to_preferences(self, restaurant_id):
         self.reload()
         for recipient in self.users:
@@ -166,3 +198,38 @@ class Restaurants(object):
 
     def restaurants(self):
         return self.restaurants
+
+class Email(object):
+
+    def __init__(self):
+        templates = os.listdir("templates/")
+        self.templates = [x.split(".")[0] for x in templates if x.split(".")[1] == "html"]
+        pass
+
+    def render_template(self, template, data):
+
+        if template.split(".")[1] == "html":
+            template = template.split(".")[0]
+
+        if template not in self.templates:
+            return False
+
+        with open("templates/"+template, 'r') as html:
+            html = html.read()
+            template = Template(html)
+            html = template.render(data=data)
+
+        return html
+
+    def send_html(self, config, html):
+
+        config = {
+            "from": self.settings.FROM,
+            "to": recipient['email'],
+            "subject": self.data['title'],
+            "html": email_html,
+        }
+
+        r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
+
+        return r.status

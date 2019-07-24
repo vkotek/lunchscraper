@@ -8,12 +8,11 @@ import requests
 import json
 import logging
 import settings as SETTINGS
-from lunchscraper import controller
 import os
+from unidecode import unidecode
+from lunchscraper import controller
 
-base_url = "https://web.kotek.com/lunch-scraper"
 SETTINGS.SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
-
 
 class lunchScraper(object):
 
@@ -24,7 +23,7 @@ class lunchScraper(object):
                 "menus": []
             }
         }
-        self.menus = []
+        self.menus = [] # New data structure
         self.settings = SETTINGS
 
     def add_menu(self, id, name, url, selector, n=0):
@@ -34,21 +33,22 @@ class lunchScraper(object):
         url      :: the URL where the menu can be found
         selector :: CSS selector to find menu on page
         n        :: specifies how to handle results
-        
+
         n = 0 [DEFAULT]
         Gets the first element in the response.
-        
+
         n = -1
         Combines the text in all found elements.
-        
+
         n = range(x, y)
         Fetches tech from elements x through y from the response."""
-        
+
         try:
             with request.urlopen(url) as response:
                 html = response.read()
                 soup = bs(html, 'lxml')
                 selected = soup.select(selector)
+
                 if n == -1:
                     text = "\n".join([item.get_text() for item in selected])
                 elif isinstance(n, range):
@@ -58,9 +58,16 @@ class lunchScraper(object):
                     text = "\n".join(text)
                 else:
                     text = selected[n].get_text()
+
                 text = [t for t in text.split("\n") if len(t) > 0]
-            self.data['body']['menus'].append({'id':id,'name':name,'url':url,'menu':text})
-            self.menus.append({'id':id,'name':name,'url':url,'menu':text})
+
+                # Checks if menu is for more days, extracts today's menu.
+                weekly_menu = self.get_today_items(text)
+                if weekly_menu:
+                    text = weekly_menu
+
+            self.menus.append({'id':id,'name':name,'url':url,'menu':text}) # New variable
+
         except Exception as e:
             print("Couldn't find menu for {}. Error: {}".format(name, e))
 
@@ -90,66 +97,120 @@ class lunchScraper(object):
 
         return True
 
-    def send_messages_html(self):
-    
+    def send_messages_html(self, email=None):
+
+        if email:
+            users = controller.User()
+            user = users.get(email=email)
+            if not user:
+                user = users.add(email, verify=True)
+            recipients = [user]
+        else:
+            recipients = self.get_recipients()
+
         auth = ("api", self.settings.MAIL_API_KEY)
-        
+
         notice = {
-            'title': "New template format!",
-            'text': "There were some significant changes on the backend this weekend, but the one change that you will most likely notice is that there is a new email style. Hope you like it! For the full list of changes, including some exciting features like automated testing and continuous integration, check out the project on GitHub!",
+            'title': "Version 1.4 released!",
+            'text': "There were some significant changes on the backend this weekend, including a new \
+            email look! For the full list of changes, including some exciting features like \
+            automated testing and continuous integration, check out the project on GitHub!",
         }
 
-        for recipient in self.get_recipients():
-            
+        for recipient in recipients:
+
             # Get menus for preferences of given user
             menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
-            
+
             data = {
                 'title': "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
                 'notice': notice,
                 'recipient': {
-                    'email': "email@email.com",
-                    'url': base_url + "/?token=" + recipient['token'],
+                    'email': recipient['email'],
+                    'url': SETTINGS.URL + "/?token=" + recipient['token'],
                 },
                 'menus': menus,
-            }   
-            
+            }
+
             # Generate html email template for user with given data
             email_html = self.render_email('master.html', data)
-            
+
             config = {
                 "from": self.settings.FROM,
-                #"to": recipient['email'],
-                "to": "kotek.vojtech@gmail.com",
+                "to": recipient['email'],
                 "subject": self.data['title'],
                 "html": email_html,
             }
             r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
 
         return True
-    
+
     def send_message(self):
         return True
-    
+
     def get_recipients(self):
-        
+
         file = self.settings.SUBSCRIBERS
-        
+
         with open(file, 'r') as f:
             subscribers = json.load(f)
-        return subscribers
-    
+        return subscribers[:1]
+
     def render_email(self, template, data):
-        
+
         with open("templates/"+template, 'r') as html:
             html = html.read()
             template = Template(html)
             html = template.render(data=data)
-        
+
         return html
-    
+
     def scrape_restaurants(self):
         your_restaurants(self)
+
+    def wday_to_text(self, weekday):
+        """
+        Converts int of weekday into list of text versions of given day.
+        """
+        if weekday == 0:
+            return ["pondeli","pondělí", "monday"]
+        elif weekday == 1:
+            return ["utery","úterý", "tuesday"]
+        elif weekday == 2:
+            return ["streda","středa", "wednesday"]
+        elif weekday == 3:
+            return ["ctvrtek","čtvrtek", "thursday"]
+        elif weekday == 4:
+            return ["patek","pátek", "friday"]
+        else:
+            return [""]
+
+    def day_found(self, text, day):
+        for lang in day:
+            if unidecode( text.lower( ) ).find( lang ) >= 0:
+                return True
+
+    def get_today_items(self, menu_list):
+        """
+        Check if menu is for multiple days, extract and return today's menu items.
+        """
+
+        weekday = datetime.today().weekday()
+        today, tomorrow = self.wday_to_text(weekday), self.wday_to_text(weekday+1)
+        menu_text = ";".join(menu_list).lower()
+
+        # Check if at today is mentioned on the menu. If yes, continue.
+        if not self.day_found(menu_text, today):
+            return False
+
+        start, end = None, None
+        for i, item in enumerate(menu_list):
+            if self.day_found(item, today):
+                start = i + 1
+            elif self.day_found(item, tomorrow):
+                end = i
+
+        return menu_list[start:end]
 
 def clean(string):
     return "".join([char for char in string if char.isalnum() or char == " "])
@@ -212,16 +273,16 @@ def your_restaurants(temp):
     n = (( weekday + 1) * 4) - 1
     selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
     temp.add_menu(id, name, url, selector, n=range(n,n+4))
-    
+
     # Prostor
     id = 6
     name = "Prostor"
     url = "http://www.prostor.je"
     selector = "#daily-menu ul"
     temp.add_menu(id, name, url, selector, n=-1)
-    
+
 if __name__ == "__main__":
     x = lunchScraper()
-    #your_restaurants(x)
-    #result = x.send_messages()
-    #print("[{}] Execution completed with {}.".format(datetime.now(), result) )
+    x.scrape_restaurants()
+    result = x.send_messages_html()
+    print("[{}] Execution completed with {}.".format(datetime.now(), result) )
