@@ -1,4 +1,4 @@
-# Lunch Menu Scraper
+# lunchscraper.py
 
 from urllib import request
 from bs4 import BeautifulSoup as bs

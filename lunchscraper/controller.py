@@ -1,3 +1,5 @@
+# controller.py
+
 import uuid
 import json
 import hashlib
@@ -6,6 +8,7 @@ from datetime import datetime
 import requests
 import settings as SETTINGS
 import os
+from jinja2 import Template
 
 class User(object):
 
@@ -49,7 +52,7 @@ class User(object):
         if verify:
             self.verify( new_user['token'] )
         else:
-            self.email_verification(new_user['uuid'])
+            self.email_verification_html(new_user['uuid'])
 
         return new_user
 
@@ -98,18 +101,21 @@ class User(object):
 
     def email_verification_html(self, uuid):
 
-        user = self.get(uuid=uuid)
+        recipient = self.get(uuid=uuid)
 
-        if not user: # User not found
+        if not recipient: # User not found
             return False
 
         data = {
             'title': "Please verify your email",
             'notice': {
                 'title': "One last step..",
-                'text': "Thank you for subscribing to the lunchScraper! Once you verify your email by clicking the button below, you will start to receive the daily menu for the restaurants in the area every day at 11AM.",
+                'text': "Thank you for subscribing to the lunchScraper! Once \
+                    you verify your email by clicking the button below, you \
+                    will start to receive the daily menu for the restaurants \
+                    in the area every day at 11AM.",
                 'button': {
-                    'url': SETTINGS.URL + "/verify?token=" + user['token'],
+                    'url': SETTINGS.URL + "/verify?token=" + recipient['token'],
                     'text': "Verify", },
             },
             'recipient': {
@@ -120,14 +126,14 @@ class User(object):
 
         html = Email().render_template("verification", data)
 
-        config = {
-            "from": self.settings.FROM,
+        data = {
+            "from": SETTINGS.FROM,
             "to": recipient['email'],
-            "subject": self.data['title'],
+            "subject": data['title'],
             "html": html,
         }
 
-        return Emailer().send_html(config, html)
+        return Email().send_html(data)
 
     def update(self, uuid, option, value):
         for i, user in enumerate(self.users):
@@ -208,28 +214,24 @@ class Email(object):
 
     def render_template(self, template, data):
 
-        if template.split(".")[1] == "html":
+        try:
             template = template.split(".")[0]
+        except:
+            pass
 
         if template not in self.templates:
             return False
 
-        with open("templates/"+template, 'r') as html:
+        with open("templates/{}.html".format(template), 'r') as html:
             html = html.read()
             template = Template(html)
             html = template.render(data=data)
 
         return html
 
-    def send_html(self, config, html):
+    def send_html(self, data):
 
-        config = {
-            "from": self.settings.FROM,
-            "to": recipient['email'],
-            "subject": self.data['title'],
-            "html": email_html,
-        }
+        auth = ("api", SETTINGS.MAIL_API_KEY)
+        r = requests.post(SETTINGS.MAIL_URL, auth=auth, data=data)
 
-        r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
-
-        return r.status
+        return r
