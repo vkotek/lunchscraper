@@ -10,7 +10,12 @@ import logging
 import settings as SETTINGS
 import os
 from unidecode import unidecode
-from lunchscraper import controller
+
+
+try:
+    import controller
+except:
+    from lunchscraper import controller
 
 SETTINGS.SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 

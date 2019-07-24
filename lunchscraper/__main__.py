@@ -1,7 +1,10 @@
 # __main__.py
-
-import lunchscraper
 from datetime import datetime
+
+try:
+    import lunchscraper
+except:
+    from lunchscraper import lunchscraper
 
 x = lunchscraper.lunchScraper()
 x.scrape_restaurants()
