@@ -9,12 +9,9 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Changelog
 
-### 2019-08-XX v1.5 [DEV]
+### 2019-08-XX v1.5 [IN PLANNING]
 - Language analysis of menus and translation to English
 - Add language selection to user preference page
-
-#### 2019-07-25 v1.4.1 [HOTFIX]
-- Add verification link to verification email.
 
 ### 2019-07-25 v1.4 [MASTER]
 - Email templates are now stored and rendered locally rather than on relying on email provider service.
@@ -44,3 +41,4 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 ## Notes
 - When running for the first time, one must create an empty subscribers.json file otherwise app fails. >> Fix this in code so that it autocreats the file.
 - Email verification might not actually work now, need to add button to verify email to verification template.
+- Verification email being sent from web app is in old template.
