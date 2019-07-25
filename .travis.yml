@@ -4,7 +4,7 @@ python:
 install:
 - pip install -r requirements.txt
 - cp settings_example.py lunchscraper/settings.py
-- cp settings_examply.py settings.py
+- cp settings_example.py settings.py
 - touch data/subscribers.json
 - pip install .
 #- python setup.py install
