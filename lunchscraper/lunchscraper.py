@@ -139,7 +139,7 @@ class lunchScraper(object):
                 'notice': notice,
                 'recipient': {
                     'email': recipient['email'],
-                    'url': SETTINGS.URL + "/?token=" + recipient['token'],
+                    'url': SETTINGS.URL + "/edit?token=" + recipient['token'],
                 },
                 'menus': menus,
             }

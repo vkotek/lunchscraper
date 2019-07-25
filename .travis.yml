@@ -3,7 +3,7 @@ python:
 - "3.5"
 install:
 - pip install -r requirements.txt
-- cp settings_example.py settings.py
+- cp settings_example.py lunchscraper/settings.py
 - touch data/subscribers.json
 - python setup.py install
 script:
