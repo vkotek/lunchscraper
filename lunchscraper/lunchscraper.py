@@ -7,10 +7,13 @@ from jinja2 import Template
 import requests
 import json
 import logging
-import settings as SETTINGS
-import os
+import os, sys
 from unidecode import unidecode
 
+# Local imports
+sys.path.insert(0,'..')
+
+import settings as SETTINGS
 
 try:
     import controller

@@ -1,6 +1,10 @@
 # __main__.py
 
 from datetime import datetime
+import sys
+
+# Local imports
+sys.path.insert(0,'..')
 
 try:
     import lunchscraper

@@ -1,5 +1,9 @@
 # cli.py
 import click
+import sys
+
+# Local imports
+sys.path.insert(0,'..')
 
 try:
     import controller

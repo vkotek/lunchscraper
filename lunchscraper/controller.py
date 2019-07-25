@@ -6,9 +6,15 @@ import hashlib
 import random
 from datetime import datetime
 import requests
-import settings as SETTINGS
-import os
+import os, sys
 from jinja2 import Template
+
+# Local imports
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+sys.path.insert(0,'..')
+
+import settings as SETTINGS
+
 
 class User(object):
 
