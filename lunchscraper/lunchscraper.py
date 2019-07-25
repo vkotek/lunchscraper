@@ -124,8 +124,12 @@ class lunchScraper(object):
             email look! For the full list of changes, including some exciting features like \
             automated testing and continuous integration, check out the project on GitHub!",
         }
+        
+        print(recipients)
 
         for recipient in recipients:
+            
+            print( "Sending email to {}.".format(recipient['email']) )
 
             # Get menus for preferences of given user
             menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
@@ -150,6 +154,7 @@ class lunchScraper(object):
                 "html": email_html,
             }
             r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
+            print("Response: {}".format(r.status_code) )
 
         return True
 
@@ -158,11 +163,11 @@ class lunchScraper(object):
 
     def get_recipients(self):
 
-        file = self.settings.SUBSCRIBERS
+        file = SETTINGS.SUBSCRIBERS
 
         with open(file, 'r') as f:
             subscribers = json.load(f)
-        return subscribers[:1]
+        return subscribers
 
     def render_email(self, template, data):
 

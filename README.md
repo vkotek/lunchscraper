@@ -9,14 +9,24 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Changelog
 
-### 2019-07-XX v1.3 [DEV]
-- Command Line Interface added for main admin functions. [WIP]
+### 2019-08-XX v1.5 [DEV]
+- Language analysis of menus and translation to English
+- Add language selection to user preference page
+
+#### 2019-07-25 v1.4.1 [HOTFIX]
+- Add verification link to verification email.
+
+### 2019-07-25 v1.4 [MASTER]
+- Email templates are now stored and rendered locally rather than on relying on email provider service.
+
+### 2019-07-XX v1.3 
+- Command Line Interface added for main admin functions.
 - Subscribers and Restaurants now stored in local 'data' folder in the application rather than web app.
 - Automated testing added using pytest application.
 - Adapted for and integrated with Travis CI for automated integration testing.
 - Application structure changed to fit with CI, testing, and best practices.
 
-### 2019-06-11 v1.2 [MASTER]
+### 2019-06-11 v1.2
 - Email is now sent iteratively to each user, allowing for personalized experience.
 - Added preference management page and link to email footer
 
@@ -33,6 +43,4 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Notes
 - When running for the first time, one must create an empty subscribers.json file otherwise app fails. >> Fix this in code so that it autocreats the file.
-- CLI is only a placeholder for now, needs to be finished.
-- Tests are only preliminary, more need to be added.
-- The Dev branch is pending merge into Master, but the subscibers.json location has changed and needs to also be updated in the front-end, which works with its own file.
+- Email verification might not actually work now, need to add button to verify email to verification template.
