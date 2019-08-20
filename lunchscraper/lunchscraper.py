@@ -119,16 +119,14 @@ class lunchScraper(object):
         auth = ("api", self.settings.MAIL_API_KEY)
 
         notice = {
-            'title': "Title",
-            'text': "There were some significant changes on the backend this weekend, including a new \
-            email look! For the full list of changes, including some exciting features like \
-            automated testing and continuous integration, check out the project on GitHub!",
+            'title': "New restaurant added!",
+            'text': "<a href='http://www.gourmetpauza.cz/'>Gourmet Pauza</a> restaurant has been added! It is located on Lidická 798/19, just next to the Zborovksa tram stop :)",
         }
 
-        notice = None
-        
+        # notice = None
+
         for recipient in recipients:
-            
+
             print( "Sending email to {}.".format(recipient['email']) )
 
             # Get menus for preferences of given user
@@ -292,6 +290,13 @@ def your_restaurants(temp):
     name = "Prostor"
     url = "http://www.prostor.je"
     selector = "#daily-menu ul"
+    temp.add_menu(id, name, url, selector, n=-1)
+
+    # Gourmet Pauza
+    id = 7
+    name = "Gourmet Pauza"
+    url = "http://www.gourmetpauza.cz/"
+    selector = "#dish-tab-45 .stm_dish_name"
     temp.add_menu(id, name, url, selector, n=-1)
 
 if __name__ == "__main__":
