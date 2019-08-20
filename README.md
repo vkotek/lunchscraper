@@ -40,5 +40,4 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Notes
 - When running for the first time, one must create an empty subscribers.json file otherwise app fails. >> Fix this in code so that it autocreats the file.
-- Email verification might not actually work now, need to add button to verify email to verification template.
-- Verification email being sent from web app is in old template.
+- Add "add new preference to all subscribers" to CLI
