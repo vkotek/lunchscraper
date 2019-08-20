@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
-cp $HOME/web.kotek.co/myapp/subscribers.json $PWD/data/subscribers.json
+cp $HOME/web.kotek.co/myapp/subscribers.json $HOME/scripts/lunchScraper/data/subscribers.json
 
-$HOME/virtualenv/bin/python $PWD/lunchscraper
+cd "${0%/*}"
+
+$HOME/virtualenv/bin/python $HOME/scripts/lunchScraper/lunchscraper

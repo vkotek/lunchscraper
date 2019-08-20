@@ -20,7 +20,7 @@ try:
 except:
     from lunchscraper import controller
 
-SETTINGS.SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
+SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 
 class lunchScraper(object):
 
@@ -119,14 +119,14 @@ class lunchScraper(object):
         auth = ("api", self.settings.MAIL_API_KEY)
 
         notice = {
-            'title': "Version 1.4 released!",
+            'title': "Title",
             'text': "There were some significant changes on the backend this weekend, including a new \
             email look! For the full list of changes, including some exciting features like \
             automated testing and continuous integration, check out the project on GitHub!",
         }
-        
-        print(recipients)
 
+        notice = None
+        
         for recipient in recipients:
             
             print( "Sending email to {}.".format(recipient['email']) )
