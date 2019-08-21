@@ -73,6 +73,9 @@ class lunchScraper(object):
                 weekly_menu = self.get_today_items(text)
                 if weekly_menu:
                     text = weekly_menu
+                    
+            if not isinstance(text, list):
+                raise Exception('Scraped menu not in list format..')
 
             self.menus.append({'id':id,'name':name,'url':url,'menu':text}) # New variable
 
@@ -120,11 +123,13 @@ class lunchScraper(object):
 
         notice = {
             'title': "New restaurant added!",
-            'text': "<a href='http://www.gourmetpauza.cz/'>Gourmet Pauza</a> restaurant has been added! It is located on Lidická 798/19, just next to the Zborovksa tram stop :)",
+            'text': "<a href='http://www.gourmetpauza.cz/'>Gourmet Pauza</a> restaurant has been added! It is located on Lidická 798/19, just next to the Zborovksa tram stop :) The menu is a bit austere but the additional food description will be added in upcoming days!",
         }
 
-        # notice = None
-
+        notice = None
+        
+        send_counter = 0
+       
         for recipient in recipients:
 
             print( "Sending email to {}.".format(recipient['email']) )
@@ -152,7 +157,11 @@ class lunchScraper(object):
                 "html": email_html,
             }
             r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
-            print("Response: {}".format(r.status_code) )
+            
+            if r.status_code == 200:
+                send_counter += 1
+               
+        print("{} / {} Emails sent successfully.".format( send_counter, len(recipients) ) )
 
         return True
 

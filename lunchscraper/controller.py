@@ -206,6 +206,7 @@ class Restaurants(object):
             {'id': 4, 'name': 'Potrefena Husa - Na Verandach'},
             {'id': 5, 'name': 'Lavande Restaurant'},
             {'id': 6, 'name': 'Prostor'},
+            {'id': 7, 'name': 'Gourmet Pauza'},
         ]
 
     def restaurants(self):

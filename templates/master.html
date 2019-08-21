@@ -175,7 +175,7 @@
       line-height: 1px !important;
       font-size: 1px !important;
     }
-    
+
     .notice {
       padding-bottom: 1em;
     }
@@ -318,13 +318,9 @@
         <table cellspacing="0" cellpadding="0" width="600" class="w320">
           {% if data.notice %}
           <tr class="notice">
-            <td class="header-lg">
-              {{ data.notice.title }}
-            </td>
-          </tr>
-          <tr>
             <td class="free-text">
-              {{ data.notice.text }}
+              <h3>{{ data.notice.title }}</h3>
+              <p>{{ data.notice.text }}</p>
             </td>
           </tr>
           {% endif %}
