@@ -122,11 +122,11 @@ class lunchScraper(object):
         auth = ("api", self.settings.MAIL_API_KEY)
 
         notice = {
-            'title': "New restaurant added!",
-            'text': "<a href='http://www.gourmetpauza.cz/'>Gourmet Pauza</a> restaurant has been added! It is located on Lidická 798/19, just next to the Zborovksa tram stop :) The menu is a bit austere but the additional food description will be added in upcoming days!",
+            'title': "New Restaurant added, AGAIN!?",
+            'text': "<a href='http://erpetgolfcentrum.cz/cherry-services/poledni-menu/'>Erpet Golf Centrum</a>'s restaurant has been added! Thanks to Vašek for the tip!",
         }
 
-        notice = None
+#        notice = None
         
         send_counter = 0
        
@@ -202,6 +202,10 @@ class lunchScraper(object):
             return ["ctvrtek","čtvrtek", "thursday"]
         elif weekday == 4:
             return ["patek","pátek", "friday"]
+        elif weekday == 5:
+            return ["sobota","sobota", "saturday"]
+        elif weekday == 6:
+            return ["nedele","neděle", "sunday"]
         else:
             return [""]
 
@@ -306,6 +310,13 @@ def your_restaurants(temp):
     name = "Gourmet Pauza"
     url = "http://www.gourmetpauza.cz/"
     selector = "#dish-tab-45 .stm_dish_name"
+    temp.add_menu(id, name, url, selector, n=-1)
+    
+    # Erpet Golf Centrum
+    id = 8
+    name = "Erpet Golf Centrum"
+    url = "http://erpetgolfcentrum.cz/cherry-services/poledni-menu/"
+    selector = "#cenik-listky"
     temp.add_menu(id, name, url, selector, n=-1)
 
 if __name__ == "__main__":
