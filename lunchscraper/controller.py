@@ -15,7 +15,6 @@ sys.path.insert(0,'..')
 
 import settings as SETTINGS
 
-
 class User(object):
 
     def __init__(self, file=None):
@@ -47,8 +46,7 @@ class User(object):
             'token': hashlib.sha224((salt + email).encode('UTF-8')).hexdigest(),
             'verified': False,
             'registered': datetime.now().isoformat(),
-            'preferences': ["1","2","3","4","5","6","7","8"],
-            # This should be auto filled with IDs from Restaurants() class.
+            'preferences': Restaurants().preferences(),
             'salt': salt,
         }
 
@@ -199,19 +197,23 @@ class User(object):
 class Restaurants(object):
 
     def __init__(self):
-        self.restaurants = [
-            {"id": 1, 'name': 'Pastva'},
-            {'id': 2, 'name': 'Sodexo, Riverview'},
-            {'id': 3, 'name': 'Dave B, Five'},
-            {'id': 4, 'name': 'Potrefena Husa - Na Verandach'},
-            {'id': 5, 'name': 'Lavande Restaurant'},
-            {'id': 6, 'name': 'Prostor'},
-            {'id': 7, 'name': 'Gourmet Pauza'},
-            {'id': 8, 'name': 'Erpet Golf Centrum'}
-        ]
+        with open("data/restaurants.json", "r") as f:
+            self.restaurants =  json.load(f)
 
     def restaurants(self):
         return self.restaurants
+
+    def get(self, id=None):
+        if isinstance(id, int):
+            for restaurant in self.restaurants:
+                if restaurant['id'] == id:
+                    return restaurant
+            return self.restaurants
+        return self.restaurants
+
+    def preferences(self):
+        # Returns all preferences as a list
+        return [ str(x['id']) for x in self.restaurants ]
 
 class Email(object):
 
@@ -243,3 +245,41 @@ class Email(object):
         r = requests.post(SETTINGS.MAIL_URL, auth=auth, data=data)
 
         return r
+
+    def get_notice(date=None):
+
+        from datetime import datetime
+
+        if date == None:
+            date = datetime.strftime(datetime.today(), "%Y-%m-%d")
+
+        try:
+            with open("data/notices.json", 'r+') as f:
+                notices = json.load(f)
+                for notice in notices:
+                    if notice['date'] == date:
+                        return notice
+        except Exception as e:
+            return False
+
+    def add_notice(notice=None):
+
+        if not notice:
+            notice = {}
+            notice['date'] = input("Provide a date to show notice (yyyy-mm-dd):\n")
+            notice['title'] = input("Title of notice:\n")
+            notice['text'] = input("Text of notice:\n")
+
+        if not isinstance(notice, dict):
+            raise Exception("Incorrect notice format, must be dict.")
+
+        # try:
+        with open("data/notices.json", "w") as f:
+            try:
+                notices = json.loads(f)
+            except:
+                notices = []
+            print(notice)
+            notices.append(notice)
+            print(notices)
+            json.dump(notices, f)

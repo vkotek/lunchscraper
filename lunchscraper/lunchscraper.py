@@ -126,7 +126,7 @@ class lunchScraper(object):
             'text': "<a href='http://erpetgolfcentrum.cz/cherry-services/poledni-menu/'>Erpet Golf Centrum</a>'s restaurant has been added! Thanks to Vašek for the tip!",
         }
 
-#        notice = None
+        notice = controller.Email.get_notice()
         
         send_counter = 0
        
@@ -245,7 +245,7 @@ def your_restaurants(temp):
     id = 1
     name = "Pastva"
     url = "https://www.pastva-restaurant.cz/nase-menu/"
-    selector = "#ffe_widget-2 .eff-panel-body"
+    selector = "#cff .cff-text"
     temp.add_menu(id, name, url, selector)
 
     # Sodexo
@@ -317,6 +317,13 @@ def your_restaurants(temp):
     name = "Erpet Golf Centrum"
     url = "http://erpetgolfcentrum.cz/cherry-services/poledni-menu/"
     selector = "#cenik-listky"
+    temp.add_menu(id, name, url, selector, n=-1)
+    
+    # Srdcovka Gurmania
+    id = 9
+    name = "Srdcovka Gurmania"
+    url = "http://www.gambrinus.cz/srdcovka/gurmania/menu#obedovemenu"
+    selector = "#obedovemenu .menu-list-day > *"
     temp.add_menu(id, name, url, selector, n=-1)
 
 if __name__ == "__main__":

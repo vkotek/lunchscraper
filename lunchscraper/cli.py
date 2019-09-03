@@ -39,30 +39,45 @@ def add(email, verify):
     click.echo("Adding {} to subscribers. Forcing verification: {}. Result: {}".format(email, verify, result))
 
 @main.command()
-@click.option('--count','-c', is_flag=True)
-def subscribers(count):
+def subscribers():
 
     users = controller.User().get()
-
-    if count:
-        count = len(users)
-        click.echo("There are {} subscribers.".format(count))
-    else:
-        for user in users:
-            click.echo("{}".format(user['email']))
+    
+    click.echo("There are {} subscribers.".format(len(users)) )
+    for user in users:
+        click.echo("{}|{}|{}".format(
+            user['email'].ljust(35," "), 
+            user['verified'],
+            list(user['preferences'])
+        ))
+      
+        
 
 @main.command()
-@click.option('-i', type=int)
-def scrape(i):
+@click.option('-id','-i', type=int)
+def scrape(id):
 
     ls = lunchscraper.lunchScraper()
     x = ls.scrape_restaurants()
 
     for r in ls.menus:
-        if i and i == r['id']:
+        if id and id == r['id']:
             click.echo(r)
-        elif not i:
+        elif not id:
             click.echo(r)
+ 
+@main.command()
+@click.argument('id', type=int)
+def new_preference(id):
+    
+    users = controller.User()
+    
+    try:
+        users.add_restaurant_to_preferences(id)
+        return True
+    except:
+        return False
+            
 
 if __name__ == '__main__':
     main()
