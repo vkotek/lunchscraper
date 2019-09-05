@@ -2,13 +2,18 @@ from lunchscraper import lunchScraper
 
 temp = lunchScraper()
 
-# Pastva
-id = 1
-name = "Pastva"
-language = "cs"
-url = "https://www.pastva-restaurant.cz/nase-menu/"
-selector = "#cff .cff-text"
-temp.add_menu(id, language, name, url, selector)
+
+
+### This is probably the best way to tackle this, and then have another file import this and iterate over the functions in it? To be tested.
+def pastva():
+    # Pastva
+    id = 1
+    name = "Pastva"
+    language = "cs"
+    url = "https://www.pastva-restaurant.cz/nase-menu/"
+    selector = "#cff .cff-text"
+    n = 0
+    temp.add_menu(id, language, name, url, selector)
 
 # Sodexo
 id = 2

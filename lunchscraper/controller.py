@@ -48,6 +48,7 @@ class User(object):
             'registered': datetime.now().isoformat(),
             'preferences': Restaurants().preferences(),
             'salt': salt,
+            'language': None,
         }
 
         self.users.append(new_user)
