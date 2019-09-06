@@ -57,7 +57,11 @@ class User(object):
         if verify:
             self.verify( new_user['token'] )
         else:
-            self.email_verification_html(new_user['uuid'])
+            result = self.send_email_verification( new_user['uuid'] )
+            if result:
+                print("Verification email sent to {}.".format( new_user['email'] ))
+            else:
+                print("Issue sending verification email to {}.".format( new_user['email'] ))
 
         return new_user
 
@@ -87,29 +91,12 @@ class User(object):
                 return True
         return False
 
-    def email_verification(self, uuid):
-
-        user = self.get(uuid=uuid)
-
-        if not user: # User not found
-            return False
-
-        return requests.post(
-            SETTINGS.MAIL_URL,
-            auth=("api", SETTINGS.MAIL_API_KEY),
-            data={"from": SETTINGS.FROM,
-                "to": user['email'],
-                "subject": "Verify your email",
-                "template": "email_verification",
-                "h:X-Mailgun-Variables": json.dumps(user),
-                 })
-
-    def email_verification_html(self, uuid):
+    def send_email_verification(self, uuid):
 
         recipient = self.get(uuid=uuid)
 
         if not recipient: # User not found
-            return False
+            raise("Recipient not found in database: {}".format(uuid))
 
         data = {
             'title': "Please verify your email",
@@ -121,7 +108,8 @@ class User(object):
                     in the area every day at 11AM.",
                 'button': {
                     'url': SETTINGS.URL + "/verify?token=" + recipient['token'],
-                    'text': "Verify", },
+                    'text': "Verify",
+                    },
             },
             'recipient': {
                 'email': recipient['email'],
@@ -129,7 +117,7 @@ class User(object):
             },
         }
 
-        html = Email().render_template("verification", data)
+        html = Email().render_template("master", data)
 
         data = {
             "from": SETTINGS.FROM,
@@ -191,7 +179,8 @@ class User(object):
     def add_restaurant_to_preferences(self, restaurant_id):
         self.reload()
         for recipient in self.users:
-            recipient['preferences'].append(str(restaurant_id))
+            if str(restaurant_id) not in str(recipient['preferences']):
+                recipient['preferences'].append(str(restaurant_id))
         self.save()
         return True
 

@@ -4,4 +4,4 @@ cp $HOME/web.kotek.co/myapp/subscribers.json $HOME/scripts/lunchScraper/data/sub
 
 cd "${0%/*}"
 
-$HOME/virtualenv/bin/python $HOME/scripts/lunchScraper/lunchscraper
+$HOME/scripts/lunchScraper/venv/bin/python $HOME/scripts/lunchScraper/lunchscraper

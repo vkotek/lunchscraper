@@ -13,12 +13,15 @@ from unidecode import unidecode
 # Local imports
 sys.path.insert(0,'..')
 
-import settings as SETTINGS
-import controller, translator
-# try:
-#     import controller, translator
-# except:
-#     from lunchscraper import controller, translator
+# import settings as SETTINGS
+# import controller, translator
+
+try:
+    import settings as SETTINGS
+    import controller, translator
+except:
+    from lunchscraper import controller, translator
+    from lunchscraper import settings as SETTINGS
 
 SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 
@@ -51,6 +54,7 @@ class lunchScraper(object):
         n = range(x, y)
         Fetches tech from elements x through y from the response."""
 
+        print("Fetching menu for {} ({})..".format(name, id))
         try:
             text_raw = self.scrape_menu( url, selector)
 
@@ -68,9 +72,11 @@ class lunchScraper(object):
             if language == 'cs':
                 text_menu_cs = text_menu
                 text_menu_en = translator.translate(text_menu, 'cs', 'en')
+                # text_menu_es = translator.translate(text_menu, 'cs', 'es')
             elif language == 'en':
                 text_menu_en = text_menu
                 text_menu_cs = translator.translate(text_menu, 'en', 'cs')
+                # text_menu_es = translator.translate(text_menu, 'en', 'es')
 
             if not isinstance(text_menu, list):
                 raise Exception('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
@@ -83,6 +89,7 @@ class lunchScraper(object):
                     'menu':text_menu,
                     'menu_cs': text_menu_cs,
                     'menu_en': text_menu_en,
+                    # 'menu_es': text_menu_es,
                 })
 
         except Exception as e:
@@ -248,27 +255,27 @@ class lunchScraper(object):
 
         return html
 
-    def scrape_restaurants(self):
-        your_restaurants(self)
+    def scrape_restaurants(self, id=None):
+        your_restaurants(self, id)
 
     def wday_to_text(self, weekday):
         """
         Converts int of weekday into list of text versions of given day.
         """
         if weekday == 0:
-            return ["pondeli","pondělí", "monday"]
+            return ["pondeli",  "pondělí",  "pondělní",                 "monday"]
         elif weekday == 1:
-            return ["utery","úterý", "tuesday"]
+            return ["utery",    "úterý",    "úterní",                   "tuesday"]
         elif weekday == 2:
-            return ["streda","středa", "wednesday", "středu"]
+            return ["streda",   "středa",   "středeční",    "středu",   "wednesday"]
         elif weekday == 3:
-            return ["ctvrtek","čtvrtek", "thursday"]
+            return ["ctvrtek",  "čtvrtek",  "čtvrteční",                "thursday"]
         elif weekday == 4:
-            return ["patek","pátek", "friday"]
+            return ["patek",    "pátek",    "páteční",                  "friday"]
         elif weekday == 5:
-            return ["sobota","sobota", "saturday", "sobotu"]
+            return ["sobota",   "sobota",   "sobotní",      "sobotu",   "saturday"]
         elif weekday == 6:
-            return ["nedele","neděle", "sunday", "neděli"]
+            return ["nedele",   "neděle",   "nedělní",      "neděli",   "sunday"]
         else:
             return [""]
 
@@ -301,112 +308,127 @@ class lunchScraper(object):
 
         return menu_list[start:end]
 
+    def save_menu(self):
+        filename = "data/menu.json"
+        with open(filename, "w+") as f:
+            json.dump(self.menus, f)
+        return True
+
 def clean(string):
     return "".join([char for char in string if char.isalnum() or char == " "])
 
-def your_restaurants(temp):
+def your_restaurants(temp, id=None):
 
-    # Pastva
-    id = 1
-    name = "Pastva"
-    language = "cs"
-    url = "https://www.pastva-restaurant.cz/nase-menu/"
-    selector = "#cff .cff-text"
-    temp.add_menu(id, language, name, url, selector)
+    print("ID:", id)
 
-    # Sodexo
-    id = 2
-    name = "Sodexo, Riverview"
-    language = "en"
-    url = "http://riverview.extranet.prod.dator3.cz/en/menu-for-the-week/"
-    weekday = 4 - datetime.today().weekday()
-    weekday = weekday if weekday > 0 else 0
-    tag = "#menu-{} .popisJidla".format(str(weekday))
-    selector = tag
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 1:
+        # Pastva
+        id = 1
+        name = "Pastva"
+        language = "cs"
+        url = "https://www.pastva-restaurant.cz/nase-menu/"
+        selector = "#cff .cff-text"
+        temp.add_menu(id, language, name, url, selector)
 
-    # FIVE - Weekly
-    id = 3
-    name = "Dave B, Five (Week)"
-    language = "en"
-    url = "https://www.daveb.cz/cs/denni-nabidka"
-    selector = ".article .row div"
-    temp.add_menu(id, language, name, url, selector, n=1)
+    if not id or id == 2:
+        # Sodexo
+        id = 2
+        name = "Sodexo, Riverview"
+        language = "en"
+        url = "http://riverview.extranet.prod.dator3.cz/en/menu-for-the-week/"
+        weekday = 4 - datetime.today().weekday()
+        weekday = weekday if weekday > 0 else 0
+        tag = "#menu-{} .popisJidla".format(str(weekday))
+        selector = tag
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
-    # FIVE - Today
-    id = 3
-    name = "Dave B, Five (Today)"
-    language = "en"
-    url = "https://www.daveb.cz/cs/denni-nabidka"
-    selector = ".article .row div"
-    weekday = 3 + datetime.today().weekday()
-    weekday = weekday if int(weekday) <= 7 else 7
+    if not id or id == 3:
+        # FIVE - Weekly
+        id = 3
+        name = "Dave B, Five (Week)"
+        language = "en"
+        url = "https://www.daveb.cz/cs/denni-nabidka"
+        selector = ".article .row div"
+        temp.add_menu(id, language, name, url, selector, n=1)
 
-    selector = "#first"
-    weekday = -1
-    temp.add_menu(id, language, name, url, selector, n=weekday)
+        # FIVE - Today
+        id = 3
+        name = "Dave B, Five (Today)"
+        language = "en"
+        url = "https://www.daveb.cz/cs/denni-nabidka"
+        selector = "#first"
+        weekday = -1
+        temp.add_menu(id, language, name, url, selector, n=weekday)
 
-    # Potrefena Husa - Na Verandach
-    id = 4
-    name = "Potrefena Husa - Na Verandach"
-    language = "cs"
-    url = "https://www.phnaverandach.cz/"
-    selector = ".listek-out .listek #table-1 .food-title"
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 4:
+        # Potrefena Husa - Na Verandach
+        id = 4
+        name = "Potrefena Husa - Na Verandach"
+        language = "cs"
+        url = "https://www.phnaverandach.cz/"
+        selector = ".listek-out .listek #table-1 .food-title"
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
-    # Lavande Restaurant - Weekly
-    id = 5
-    name = "Lavande Restaurant - Week"
-    language = "cs"
-    url = "https://restaurantlavande.cz/menu/#week-menu"
-    selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
-    temp.add_menu(id, language, name, url, selector, n=range(0,3))
+    if not id or id == 5:
+        # Lavande Restaurant - Weekly
+        id = 5
+        name = "Lavande Restaurant - Week"
+        language = "cs"
+        url = "https://restaurantlavande.cz/menu/#week-menu"
+        selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
+        temp.add_menu(id, language, name, url, selector, n=range(0,3))
 
-    # Lavande Restaurant - Daily
-    id = 5
-    name = "Lavande Restaurant - Daily"
-    language = "cs"
-    url = "https://restaurantlavande.cz/menu/#week-menu"
-    weekday = datetime.today().weekday()
-    weekday = weekday if weekday < 5 else 4
-    n = (( weekday + 1) * 4) - 1
-    selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
-    temp.add_menu(id, language, name, url, selector, n=range(n,n+4))
+    if not id or id == 5:
+        # Lavande Restaurant - Daily
+        id = 5
+        name = "Lavande Restaurant - Daily"
+        language = "cs"
+        url = "https://restaurantlavande.cz/menu/#week-menu"
+        weekday = datetime.today().weekday()
+        weekday = weekday if weekday < 5 else 4
+        n = (( weekday + 1) * 4) - 1
+        selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
+        temp.add_menu(id, language, name, url, selector, n=range(n,n+4))
 
-    # Prostor
-    id = 6
-    name = "Prostor"
-    language = "cs"
-    url = "http://www.prostor.je"
-    selector = "#daily-menu ul"
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 6:
+        # Prostor
+        id = 6
+        name = "Prostor"
+        language = "cs"
+        url = "http://www.prostor.je"
+        selector = "#daily-menu ul"
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
-    # Gourmet Pauza
-    id = 7
-    name = "Gourmet Pauza"
-    language = "cs"
-    url = "http://www.gourmetpauza.cz/"
-    selector = "#dish-tab-45 .stm_dish_name"
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 7:
+        # Gourmet Pauza
+        id = 7
+        name = "Gourmet Pauza"
+        language = "cs"
+        url = "http://www.gourmetpauza.cz/"
+        selector = "#dish-tab-45 .stm_dish_name"
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
-    # Erpet Golf Centrum
-    id = 8
-    name = "Erpet Golf Centrum"
-    language = "cs"
-    url = "http://erpetgolfcentrum.cz/cherry-services/poledni-menu/"
-    selector = "#cenik-listky"
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 8:
+        # Erpet Golf Centrum
+        id = 8
+        name = "Erpet Golf Centrum"
+        language = "cs"
+        url = "http://erpetgolfcentrum.cz/cherry-services/poledni-menu/"
+        selector = "#cenik-listky"
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
-    # Srdcovka Gurmania
-    id = 9
-    name = "Srdcovka Gurmania"
-    language = "cs"
-    url = "http://www.gambrinus.cz/srdcovka/gurmania/menu#obedovemenu"
-    selector = "#obedovemenu .menu-list-day > *"
-    temp.add_menu(id, language, name, url, selector, n=-1)
+    if not id or id == 9:
+        # Srdcovka Gurmania
+        id = 9
+        name = "Srdcovka Gurmania"
+        language = "cs"
+        url = "http://www.gambrinus.cz/srdcovka/gurmania/menu#obedovemenu"
+        selector = "#obedovemenu .menu-list-day > *"
+        temp.add_menu(id, language, name, url, selector, n=-1)
 
 if __name__ == "__main__":
     x = lunchScraper()
     x.scrape_restaurants()
+    x.save_menu()
     result = x.send_messages_html()
     print("[{}] Execution completed with {}.".format(datetime.now(), result) )
