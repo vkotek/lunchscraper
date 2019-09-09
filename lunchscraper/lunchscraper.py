@@ -28,13 +28,7 @@ SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 class lunchScraper(object):
 
     def __init__(self):
-        self.data = {
-            "title": "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
-            "body": {
-                "menus": []
-            }
-        }
-        self.menus = [] # New data structure
+        self.menus = []
         self.settings = SETTINGS
 
     def add_menu(self, id, language, name, url, selector, n=0):
@@ -79,7 +73,8 @@ class lunchScraper(object):
                 # text_menu_es = translator.translate(text_menu, 'en', 'es')
 
             if not isinstance(text_menu, list):
-                raise Exception('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
+                print('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
+                # raise Exception('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
 
             self.menus.append(
                 {
@@ -93,7 +88,7 @@ class lunchScraper(object):
                 })
 
         except Exception as e:
-            print("Couldn't find menu for {}. Error: {}".format(name, e))
+            print("Couldn't get menu for {}. Error: {}".format(name, e))
 
 
     def scrape_menu(self, url, selector):
@@ -151,33 +146,6 @@ class lunchScraper(object):
 
         return trim_left(trim_right(txt))
 
-
-    def send_messages(self):
-
-        recipients = self.get_recipients()
-
-        auth = ("api", self.settings.MAIL_API_KEY)
-        results = {}
-
-        for recipient in recipients:
-            menus = [r for r in self.data['body']['menus'] if str(r['id']) in recipient['preferences']]
-            data = { 'body': {
-                'menus': menus,
-                'token': recipient['token'],
-            }, 'title': self.data['title'],
-            }
-            config = {
-                "from": self.settings.FROM,
-                "to": recipient['email'],
-                "subject": self.data['title'],
-                "h:X-Mailgun-Variables": json.dumps(data),
-                "t:text": "yes",
-                "template": "daily-menu",
-            }
-            r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
-
-        return True
-
     def send_messages_html(self, email=None):
 
         if email:
@@ -197,42 +165,50 @@ class lunchScraper(object):
 
         for recipient in recipients:
 
-            print( "Sending email to {}.".format(recipient['email']) )
+            try:
+                print( "Sending email to {}".format(recipient['email'].ljust(40, ".") ), end="")
 
-            # Get menus for preferences of given user
-            menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
+                # Get menus for preferences of given user
+                menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
 
-            if recipient['language'] in ['cs', 'en']: # Check if language is set for user.
-                language = str('menu_' + recipient['language'])
-            else: # Use original menu language
-                language = 'menu'
-            for menu in menus:
-                menu['menu'] = menu[language]
+                if recipient['language'] in ['cs', 'en']: # Check if language is set for user.
+                    language = str('menu_' + recipient['language'])
+                else: # Use original menu language
+                    language = 'menu'
+                for menu in menus:
+                    menu['menu'] = menu[language]
 
-            data = {
-                'title': "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
-                'notice': notice,
-                'recipient': {
-                    'email': recipient['email'],
-                    'url': SETTINGS.URL + "/edit?token=" + recipient['token'],
-                },
-                'menus': menus,
-                'language': language,
-            }
+                data = {
+                    'title': "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
+                    'notice': notice,
+                    'recipient': {
+                        'email': recipient['email'],
+                        'url': SETTINGS.URL + "/edit?token=" + recipient['token'],
+                    },
+                    'menus': menus,
+                    'language': language,
+                }
 
-            # Generate html email template for user with given data
-            email_html = self.render_email('master.html', data)
+                # Generate html email template for user with given data
+                email_html = self.render_email('master.html', data)
 
-            config = {
-                "from": self.settings.FROM,
-                "to": recipient['email'],
-                "subject": self.data['title'],
-                "html": email_html,
-            }
-            r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
+                config = {
+                    "from": self.settings.FROM,
+                    "to": recipient['email'],
+                    "subject": "Daily Menu for {}".format(datetime.now().strftime("%A, %d-%b")),
+                    "html": email_html,
+                }
+                r = requests.post(self.settings.MAIL_URL, auth=auth, data=config)
 
-            if r.status_code == 200:
-                send_counter += 1
+                if r.status_code == 200:
+                    send_counter += 1
+                    print("OK!")
+                else:
+                    print("FAILED ({})".format(str(r.status_code)))
+
+            except Exception as e:
+                print("ERROR: {}".format(str(e)))
+
 
         print("{} / {} Emails sent successfully.".format( send_counter, len(recipients) ) )
 
@@ -309,19 +285,24 @@ class lunchScraper(object):
         return menu_list[start:end]
 
     def save_menu(self):
+
         filename = "data/menu.json"
+
+        data = {
+            'date': datetime.now().strftime("%A (%Y-%m-%d)"),
+            'menus': self.menus
+        }
+
         with open(filename, "w+") as f:
-            json.dump(self.menus, f)
+            json.dump(data, f)
         return True
 
 def clean(string):
     return "".join([char for char in string if char.isalnum() or char == " "])
 
-def your_restaurants(temp, id=None):
+def your_restaurants(temp, i):
 
-    print("ID:", id)
-
-    if not id or id == 1:
+    if not i or i == 3:
         # Pastva
         id = 1
         name = "Pastva"
@@ -330,7 +311,7 @@ def your_restaurants(temp, id=None):
         selector = "#cff .cff-text"
         temp.add_menu(id, language, name, url, selector)
 
-    if not id or id == 2:
+    if not i or i == 2:
         # Sodexo
         id = 2
         name = "Sodexo, Riverview"
@@ -338,15 +319,14 @@ def your_restaurants(temp, id=None):
         url = "http://riverview.extranet.prod.dator3.cz/en/menu-for-the-week/"
         weekday = 4 - datetime.today().weekday()
         weekday = weekday if weekday > 0 else 0
-        tag = "#menu-{} .popisJidla".format(str(weekday))
-        selector = tag
+        selector = "#menu-{} .popisJidla".format(str(weekday))
         temp.add_menu(id, language, name, url, selector, n=-1)
 
-    if not id or id == 3:
+    if not i or i == 3:
         # FIVE - Weekly
         id = 3
         name = "Dave B, Five (Week)"
-        language = "en"
+        language = "cs"
         url = "https://www.daveb.cz/cs/denni-nabidka"
         selector = ".article .row div"
         temp.add_menu(id, language, name, url, selector, n=1)
@@ -354,13 +334,13 @@ def your_restaurants(temp, id=None):
         # FIVE - Today
         id = 3
         name = "Dave B, Five (Today)"
-        language = "en"
+        language = "cs"
         url = "https://www.daveb.cz/cs/denni-nabidka"
         selector = "#first"
         weekday = -1
         temp.add_menu(id, language, name, url, selector, n=weekday)
 
-    if not id or id == 4:
+    if not i or i == 4:
         # Potrefena Husa - Na Verandach
         id = 4
         name = "Potrefena Husa - Na Verandach"
@@ -369,7 +349,7 @@ def your_restaurants(temp, id=None):
         selector = ".listek-out .listek #table-1 .food-title"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
-    if not id or id == 5:
+    if not i or i == 5:
         # Lavande Restaurant - Weekly
         id = 5
         name = "Lavande Restaurant - Week"
@@ -378,7 +358,7 @@ def your_restaurants(temp, id=None):
         selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
         temp.add_menu(id, language, name, url, selector, n=range(0,3))
 
-    if not id or id == 5:
+    if not i or i == 5:
         # Lavande Restaurant - Daily
         id = 5
         name = "Lavande Restaurant - Daily"
@@ -390,7 +370,7 @@ def your_restaurants(temp, id=None):
         selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
         temp.add_menu(id, language, name, url, selector, n=range(n,n+4))
 
-    if not id or id == 6:
+    if not i or i == 6:
         # Prostor
         id = 6
         name = "Prostor"
@@ -399,7 +379,7 @@ def your_restaurants(temp, id=None):
         selector = "#daily-menu ul"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
-    if not id or id == 7:
+    if not i or i == 7:
         # Gourmet Pauza
         id = 7
         name = "Gourmet Pauza"
@@ -408,7 +388,7 @@ def your_restaurants(temp, id=None):
         selector = "#dish-tab-45 .stm_dish_name"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
-    if not id or id == 8:
+    if not i or i == 8:
         # Erpet Golf Centrum
         id = 8
         name = "Erpet Golf Centrum"
@@ -417,7 +397,7 @@ def your_restaurants(temp, id=None):
         selector = "#cenik-listky"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
-    if not id or id == 9:
+    if not i or i == 9:
         # Srdcovka Gurmania
         id = 9
         name = "Srdcovka Gurmania"

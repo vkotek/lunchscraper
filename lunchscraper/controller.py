@@ -96,7 +96,7 @@ class User(object):
         recipient = self.get(uuid=uuid)
 
         if not recipient: # User not found
-            raise("Recipient not found in database: {}".format(uuid))
+            print("Recipient not found in database: {}".format(uuid))
 
         data = {
             'title': "Please verify your email",
@@ -273,3 +273,14 @@ class Email(object):
             notices.append(notice)
             print(notices)
             json.dump(notices, f)
+
+class Menu(object):
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get():
+        with open(path+"/data/menu.json", "r") as f:
+            data = json.load(f)
+        return data

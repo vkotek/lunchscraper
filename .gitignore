@@ -109,3 +109,4 @@ settings.py
 # Custom
 *.ipynb
 subscribers.json
+data/*
