@@ -1,15 +1,16 @@
 # cli.py
 import click
 import sys
+from datetime import datetime
+import dateutil.parser
 
 # Local imports
 sys.path.insert(0,'..')
 
 try:
-    import controller
-    import lunchscraper
+    import lunchscraper, controller, helpers
 except:
-    from lunchscraper import controller, lunchscraper
+    from lunchscraper import lunchscraper, controller, helpers
 
 @click.group()
 def main():
@@ -45,20 +46,27 @@ def subscribers():
 
     click.echo("There are {} subscribers.".format(len(users)) )
     for user in users:
-        click.echo("{}|{}|{}".format(
+        click.echo("{} | {} | {} | {}".format(
             user['email'].ljust(35," "),
-            user['verified'],
-            list(user['preferences'])
+            # user['verified'],
+            helpers.pretty_datetime(user['verified']).rjust(16),
+            # ",".join(list(user['preferences'])),
+            "".join(user['preferences']).ljust(10),
+            user['language'] if user['language'] is not None else ""
         ))
 
 
 
 @main.command()
-@click.option('-id','-i', type=int)
-def scrape(id):
+@click.option('--id','-i', type=int)
+@click.option('--save',' /-s', is_flag=True)
+def scrape(id, save):
 
     temp = lunchscraper.lunchScraper()
     temp.scrape_restaurants(id)
+    if save:
+        temp.save_menu()
+        click.echo("Menu saved to file.")
 
     return click.echo(temp.menus)
 
@@ -109,6 +117,10 @@ def resend_verification(email):
         return click.echo("Verification email sent to {}.".format(user['email']))
 
     return click.echo("Could not resend verification email.")
+
+@main.command()
+def saved_menu():
+    return click.echo(controller.Menu.get())    
 
 if __name__ == '__main__':
     main()

@@ -286,6 +286,11 @@ class Menu(object):
 
     @staticmethod
     def get():
-        with open(path+"/data/menu.json", "r") as f:
+        try:
+            menu_json = path + "/data/menu.json"
+        except:
+            menu_json = "data/menu.json"
+
+        with open(menu_json, "r") as f:
             data = json.load(f)
         return data
