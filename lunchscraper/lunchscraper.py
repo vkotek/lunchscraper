@@ -48,7 +48,7 @@ class lunchScraper(object):
         n = range(x, y)
         Fetches tech from elements x through y from the response."""
 
-        print("Fetching menu for {} ({})..".format(name, id))
+        print("Fetching menu for {}{})".format(name.rjust(20), id), end="")
         try:
             text_raw = self.scrape_menu( url, selector)
 
@@ -73,7 +73,8 @@ class lunchScraper(object):
                 # text_menu_es = translator.translate(text_menu, 'en', 'es')
 
             if not isinstance(text_menu, list):
-                print('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
+                print('ERROR: NOT A LIST ({})'.format(type(text_menu)))
+                return False
                 # raise Exception('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
 
             self.menus.append(
@@ -86,6 +87,9 @@ class lunchScraper(object):
                     'menu_en': text_menu_en,
                     # 'menu_es': text_menu_es,
                 })
+            
+            print("OK!")
+            return True
 
         except Exception as e:
             print("Couldn't get menu for {}. Error: {}".format(name, e))
@@ -162,15 +166,19 @@ class lunchScraper(object):
         notice = controller.Email.get_notice()
 
         send_counter = 0
+        
+        recipients = [recipient for recipient in recipients if recipient['verified'] is not False]
 
         for recipient in recipients:
 
             try:
+
                 print( "Sending email to {}".format(recipient['email'].ljust(40, ".") ), end="")
 
                 # Get menus for preferences of given user
                 menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
-
+                   
+                # Define language so it corresponds to dictionary keys of languages in menu dict
                 if recipient['language'] in ['cs', 'en']: # Check if language is set for user.
                     language = str('menu_' + recipient['language'])
                 else: # Use original menu language
@@ -295,6 +303,8 @@ class lunchScraper(object):
 
         with open(filename, "w+") as f:
             json.dump(data, f)
+
+        print ("File saved to ")
         return True
 
 def clean(string):
@@ -407,8 +417,9 @@ def your_restaurants(temp, i):
         temp.add_menu(id, language, name, url, selector, n=-1)
 
 if __name__ == "__main__":
+    print("[{}] Execution started".format(datetime.now()) )
     x = lunchScraper()
     x.scrape_restaurants()
     x.save_menu()
-    result = x.send_messages_html()
-    print("[{}] Execution completed with {}.".format(datetime.now(), result) )
+    x.send_messages_html()
+    print("[{}] Execution completed".format(datetime.now()) )

@@ -13,7 +13,12 @@ from jinja2 import Template
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 sys.path.insert(0,'..')
 
-import settings as SETTINGS
+try:
+    import settings as SETTINGS
+    import controller, translator
+except:
+    from lunchscraper import controller, translator
+    from lunchscraper import settings as SETTINGS
 
 class User(object):
 
