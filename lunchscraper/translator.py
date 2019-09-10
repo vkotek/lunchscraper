@@ -1,12 +1,8 @@
 import os
 
-if os.environ.get('CI') == 'True':
-    
-    def translate(text, source_language, target_language):
-        return text
-    
-else:
-    
+
+if os.environ.get('CI') == None:
+
     path = "/home/vojtech/ipython/key.json"
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
 
@@ -18,20 +14,23 @@ else:
 
     parent = client.location_path(project_id, location)
 
-    def translate(text, source_language, target_language):
+def translate(text, source_language, target_language):
 
-        if isinstance(text, list):
-            text = "\n".join(text)
+    if os.environ.get('CI') != None:
+        return text
 
-        response = client.translate_text(
-            parent=parent,
-            contents=[text],
-            mime_type='text/plain',  # mime types: text/plain, text/html
-            source_language_code=source_language,
-            target_language_code=target_language)
+    if isinstance(text, list):
+        text = "\n".join(text)
 
-        try:
-            response = response.translations[0].translated_text
-            response = response.split("\n")
-        finally:
-            return response
+    response = client.translate_text(
+        parent=parent,
+        contents=[text],
+        mime_type='text/plain',  # mime types: text/plain, text/html
+        source_language_code=source_language,
+        target_language_code=target_language)
+
+    try:
+        response = response.translations[0].translated_text
+        response = response.split("\n")
+    finally:
+        return response

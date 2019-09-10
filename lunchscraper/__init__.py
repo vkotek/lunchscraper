@@ -6,6 +6,6 @@ import os, sys
 sys.path.insert(0,'..')
 
 try:
-    import controller, cli, lunchscraper
+    import controller, cli, lunchscraper, translator
 except:
-    from lunchscraper import controller, cli, lunchscraper
+    from lunchscraper import controller, cli, lunchscraper, translator
