@@ -120,7 +120,7 @@ def resend_verification(email):
 
 @main.command()
 def saved_menu():
-    return click.echo(controller.Menu.get())    
+    return click.echo(controller.Menu.get())
 
 if __name__ == '__main__':
     main()

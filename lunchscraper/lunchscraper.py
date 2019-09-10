@@ -297,18 +297,21 @@ class lunchScraper(object):
     def save_menu(self):
 
         filename = "data/menu.json"
-        print(os.path.abspath(filename))
+        print("Attempting to save menu to {}..".format( os.path.abspath(filename)) )
 
         data = {
             'date': datetime.now().strftime("%A (%Y-%m-%d)"),
             'menus': self.menus
         }
 
-        with open(filename, "w+") as f:
-            json.dump(data, f)
-
-        print ("Menu saved to file.")
-        return True
+        try:
+            with open(filename, "w+") as f:
+                json.dump(data, f)
+            print ("OK!")
+            return True
+        except Exception as e:
+            print ("Error occured during saving:", e)
+            return False
 
     @staticmethod
     def clean(string):
