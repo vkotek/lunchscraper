@@ -2,10 +2,12 @@ language: python
 python:
 - "3.5"
 install:
-- pip install -r requirements.txt
+#- pip install -r requirements.txt
 - cp settings_example.py lunchscraper/settings.py
 - cp settings_example.py settings.py
 - touch data/subscribers.json
+- touch data/menu.json
+- touch data/notices.json
 #- pip install .
 - python setup.py install
 script:
