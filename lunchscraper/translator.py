@@ -3,7 +3,7 @@ import os
 path = "/home/vojtech/ipython/key.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = path
 
-if os.environ.get('CI') == 'True':
+if os.environ.get('CI') != None:
     # For integration testing, don't run API.
     
     def translate(text, source_language, target_language):
