@@ -1,4 +1,7 @@
 ### This is probably the best way to tackle this, and then have another file import this and iterate over the functions in it? To be tested.
+
+from datetime import datetime
+
 def scrape(temp, i):
 
     if not i or i == 1:
