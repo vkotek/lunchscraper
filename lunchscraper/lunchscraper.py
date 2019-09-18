@@ -1,6 +1,7 @@
 # lunchscraper.py
 
 from urllib import request
+import requests
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from jinja2 import Template
@@ -48,7 +49,7 @@ class lunchScraper(object):
         n = range(x, y)
         Fetches tech from elements x through y from the response."""
 
-        print("[{}] Fetching menu for {}".format(id, name.ljust(20)), end="")
+        print("[{}] Fetching menu for {}".format(id, name.ljust(30)), end="")
         try:
             text_raw = self.scrape_menu( url, selector)
 
@@ -97,8 +98,10 @@ class lunchScraper(object):
 
     def scrape_menu(self, url, selector):
         try:
-            with request.urlopen(url) as response:
-                html = response.read()
+            # with request.urlopen(url) as response:
+            with requests.get(url, timeout=9) as response:
+                response.encoding = 'UTF-8'
+                html = response.text
                 soup = bs(html, 'lxml')
                 selected = soup.select(selector)
 
