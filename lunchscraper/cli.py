@@ -48,10 +48,9 @@ def subscribers():
     for user in users:
         click.echo("{} | {} | {} | {}".format(
             user['email'].ljust(35," "),
-            # user['verified'],
             helpers.pretty_datetime(user['verified']).rjust(16),
             # ",".join(list(user['preferences'])),
-            "".join(user['preferences']).ljust(10),
+            ".".join(user['preferences']).ljust(22),
             user['language'] if user['language'] is not None else ""
         ))
 

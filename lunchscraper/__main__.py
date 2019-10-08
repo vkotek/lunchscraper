@@ -11,8 +11,10 @@ try:
 except:
     from lunchscraper import lunchscraper
 
+
+print("[{}] Execution started".format(datetime.now()) )
 x = lunchscraper.lunchScraper()
 x.scrape_restaurants()
-result = x.send_messages_html()
-
-print("[{}] Execution completed with {}.".format(datetime.now(), result) )
+x.save_menu()
+x.send_messages_html()
+print("[{}] Execution completed".format(datetime.now()) )

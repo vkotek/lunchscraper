@@ -107,3 +107,12 @@ def scrape(temp, i):
         url = "http://www.gambrinus.cz/srdcovka/gurmania/menu#obedovemenu"
         selector = "#obedovemenu .menu-list-day > *"
         temp.add_menu(id, language, name, url, selector, n=-1)
+
+    if not i or i == 10:
+        # Tradice
+        id = 10
+        name = "Tradice"
+        language = "cs"
+        url = "http://tradiceandel.cz/cz/denni-nabidka/"
+        selector = ".content.menu"
+        temp.add_menu(id, language, name, url, selector, n=-1)

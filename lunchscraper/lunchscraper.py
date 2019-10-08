@@ -8,14 +8,11 @@ from jinja2 import Template
 import requests
 import json
 import logging
-import os, sys
+import os, sys, traceback
 from unidecode import unidecode
 
 # Local imports
 sys.path.insert(0,'..')
-
-# import settings as SETTINGS
-# import controller, translator
 
 try:
     import settings as SETTINGS
@@ -59,7 +56,7 @@ class lunchScraper(object):
             text_menu = self.get_today_items( text_list)
 
             # Remove any short list items (i.e. prices)
-            text_menu = [ t for t in text_menu if len(t) > 10]
+            text_menu = [ self.trim_junk(t) for t in text_menu if len(t) > 10]
 
             # Translate to Czech / English
             target_language = 'cs' if language == 'en' else 'en'
@@ -67,16 +64,13 @@ class lunchScraper(object):
             if language == 'cs':
                 text_menu_cs = text_menu
                 text_menu_en = translator.translate(text_menu, 'cs', 'en')
-                # text_menu_es = translator.translate(text_menu, 'cs', 'es')
             elif language == 'en':
                 text_menu_en = text_menu
                 text_menu_cs = translator.translate(text_menu, 'en', 'cs')
-                # text_menu_es = translator.translate(text_menu, 'en', 'es')
 
             if not isinstance(text_menu, list):
                 print('ERROR: NOT A LIST ({})'.format(type(text_menu)))
                 return False
-                # raise Exception('Scraped Menu: Expected list, got {}.'.format(type(text_menu)))
 
             self.menus.append(
                 {
@@ -86,7 +80,6 @@ class lunchScraper(object):
                     'menu':text_menu,
                     'menu_cs': text_menu_cs,
                     'menu_en': text_menu_en,
-                    # 'menu_es': text_menu_es,
                 })
 
             print("OK!")
@@ -94,11 +87,13 @@ class lunchScraper(object):
 
         except Exception as e:
             print("Couldn't get menu for {}. Error: {}".format(name, e))
+            print('-'*60)
+            traceback.print_exc(file=sys.stdout)
+            print('-'*60)
 
 
     def scrape_menu(self, url, selector):
         try:
-            # with request.urlopen(url) as response:
             with requests.get(url, timeout=9) as response:
                 response.encoding = 'UTF-8'
                 html = response.text
@@ -319,11 +314,13 @@ class lunchScraper(object):
     @staticmethod
     def clean(string):
         return "".join([char for char in string if char.isalnum() or char == " "])
+    
+    @staticmethod
+    def trim_junk(text):
+        def find_last_letter(text):
+            for i, letter in enumerate(text):
+                if letter.isalpha():
+                    last_letter = i + 1
+            return last_letter
 
-if __name__ == "__main__":
-    print("[{}] Execution started".format(datetime.now()) )
-    x = lunchScraper()
-    x.scrape_restaurants()
-    x.save_menu()
-    x.send_messages_html()
-    print("[{}] Execution completed".format(datetime.now()) )
+        return text[:find_last_letter(text)]
