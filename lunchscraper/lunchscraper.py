@@ -56,7 +56,7 @@ class lunchScraper(object):
             text_menu = self.get_today_items( text_list)
 
             # Remove any short list items (i.e. prices)
-            text_menu = [ self.trim_junk(t) for t in text_menu if len(t) > 10]
+            text_menu = [ self.trim_junk(t) for t in text_menu if len(t) > 6]
 
             # Translate to Czech / English
             target_language = 'cs' if language == 'en' else 'en'
