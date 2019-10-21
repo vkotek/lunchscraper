@@ -10,7 +10,7 @@ if os.path.isfile(requirementPath):
 
 setup(
     name="LUNCHSCRAPER", 
-    version="1.5.0",
+    version="1.6.0",
     description="Fetches and email daily menus for restaurants",
     author="Vojtech Kotek",
     author_email="vojtech@kotek.co",
