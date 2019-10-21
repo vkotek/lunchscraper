@@ -116,3 +116,23 @@ def scrape(temp, i):
         url = "http://tradiceandel.cz/cz/denni-nabidka/"
         selector = ".content.menu"
         temp.add_menu(id, language, name, url, selector, n=-1)
+
+    if not i or i == 11:
+        # Eaternia
+        id = 11
+        name = "Eaternia"
+        language = "cs"
+        url = "https://www.eterniasmichov.com/eaternia-jidelna"
+        selector = '.dropdown ~ div[class$="PoledniMenu"] > div'
+        temp.add_menu(id, language, name, url, selector, n=-1, javascript=True)
+
+    # if not i or i == 12 and False:
+    #     # U Kroka
+    #     id = 12
+    #     name = "U Kroka"
+    #     language = "cs"
+    #     url = "https://www.ukroka.cz/menus-1"
+    #     selector = 'iframe[title="Menus"]'
+    #     foo = temp.scrape_menu("self", url, selector, javascript=True)
+    #     selector = 'li[data-hook="wixrest-menus-item"]'
+    #     temp.add_menu(id, language, name, url, selector, n=-1, javascript=True)

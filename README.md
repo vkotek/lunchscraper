@@ -9,14 +9,21 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Changelog
 
-### 2019-08-XX v1.5 [IN PLANNING]
-- Language analysis of menus and translation to English
+### 2019-10-XX v1.7 [IN PROGRESS]
+- Allow subscribers to define the order of menus on the preference page.
+
+### 2019-10-21 v1.6 [MASTER]
+- When a menu cannot be retrieved, the restaurant still appears in the email with a message.
+- Added Selenium and headless Chrome to support scraping of JavaScript rendered websites.
+
+### 2019-08-XX v1.5
+- Language translation of menus to English
 - Add language selection to user preference page
 
-### 2019-07-25 v1.4 [MASTER]
+### 2019-07-25 v1.4
 - Email templates are now stored and rendered locally rather than on relying on email provider service.
 
-### 2019-07-XX v1.3 
+### 2019-07-XX v1.3
 - Command Line Interface added for main admin functions.
 - Subscribers and Restaurants now stored in local 'data' folder in the application rather than web app.
 - Automated testing added using pytest application.
@@ -39,5 +46,4 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 
 ## Notes
-- When running for the first time, one must create an empty subscribers.json file otherwise app fails. >> Fix this in code so that it autocreats the file.
-- Add "add new preference to all subscribers" to CLI
+- When running for the first time, one must create an empty subscribers.json file otherwise app fails. >> Fix this in code so that it auto-creates the file.

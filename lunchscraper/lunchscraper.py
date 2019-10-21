@@ -10,6 +10,9 @@ import json
 import logging
 import os, sys, traceback
 from unidecode import unidecode
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from time import sleep
 
 # Local imports
 sys.path.insert(0,'..')
@@ -29,13 +32,14 @@ class lunchScraper(object):
         self.menus = []
         self.settings = SETTINGS
 
-    def add_menu(self, id, language, name, url, selector, n=0):
+    def add_menu(self, id, language, name, url, selector, n=0, javascript=False):
         """
-        id       :: id of the restaurant, used for grouping and hiding restaurants.
-        name     :: name of the restaurant
-        url      :: the URL where the menu can be found
-        selector :: CSS selector to find menu on page
-        n        :: specifies how to handle results
+        id          :: id of the restaurant, used for grouping and hiding restaurants.
+        name        :: name of the restaurant
+        url         :: the URL where the menu can be found
+        selector    :: CSS selector to find menu on page
+        n           :: specifies how to handle results
+        javascript  :: use headless chrome to render page - when content is loaded by JS.
 
         n = 0 [DEFAULT]
         Gets the first element in the response.
@@ -48,7 +52,7 @@ class lunchScraper(object):
 
         print("[{}] Fetching menu for {}".format(id, name.ljust(30)), end="")
         try:
-            text_raw = self.scrape_menu( url, selector)
+            text_raw = self.scrape_menu( url, selector, javascript=javascript)
 
             text_list = self.convert_to_list( text_raw, n)
 
@@ -56,10 +60,16 @@ class lunchScraper(object):
             text_menu = self.get_today_items( text_list)
 
             # Remove any short list items (i.e. prices)
-            text_menu = [ self.trim_junk(t) for t in text_menu if len(t) > 6]
+            text_menu = [ self.trim_junk(t).capitalize() for t in text_menu if len(t) > 6]
+
+            # Remove duplicates
+            text_menu = list( set( text_menu ) )
 
             # Translate to Czech / English
-            target_language = 'cs' if language == 'en' else 'en'
+            # target_language = 'cs' if language == 'en' else 'en'
+
+            if not text_menu:
+                raise Exception("No data returned.")
 
             if language == 'cs':
                 text_menu_cs = text_menu
@@ -70,8 +80,23 @@ class lunchScraper(object):
 
             if not isinstance(text_menu, list):
                 print('ERROR: NOT A LIST ({})'.format(type(text_menu)))
-                return False
+                raise Exception("Expected list, got {}".format(type(text_menu)))
 
+            print("OK!")
+            return True
+
+        except Exception as e:
+            print("Couldn't get menu for {}. Error: {}".format(name, e))
+            # print('-'*60)
+            # traceback.print_exc(file=sys.stdout)
+            # print('-'*60)
+
+            # Dummy values on failure
+            text_menu = ["Nepodařilo se setřít menu :("]
+            text_menu_cs = ["Nepodařilo se setřít menu :("]
+            text_menu_en = ["Could not scrape menu :("]
+
+        finally:
             self.menus.append(
                 {
                     'id':id,
@@ -82,26 +107,27 @@ class lunchScraper(object):
                     'menu_en': text_menu_en,
                 })
 
-            print("OK!")
-            return True
-
-        except Exception as e:
-            print("Couldn't get menu for {}. Error: {}".format(name, e))
-            print('-'*60)
-            traceback.print_exc(file=sys.stdout)
-            print('-'*60)
-
-
-    def scrape_menu(self, url, selector):
+    def scrape_menu(self, url, selector, javascript):
         try:
-            with requests.get(url, timeout=9) as response:
-                response.encoding = 'UTF-8'
-                html = response.text
+            # Use Selenium and headless Chrome browswer to render JS generated pages.
+            if javascript:
+                options = Options()
+                options.headless = True
+                driver = webdriver.Chrome(options=options, executable_path=r'/usr/bin/chromedriver')
+                driver.get(url)
+                sleep(1)
+                html = driver.page_source
                 soup = bs(html, 'lxml')
                 selected = soup.select(selector)
+                return selected
+            else:
+                with requests.get(url, timeout=9) as response:
+                    response.encoding = 'UTF-8'
+                    html = response.text
+                    soup = bs(html, 'lxml')
+                    selected = soup.select(selector)
 
-            return selected
-
+                return selected
         except:
             raise Exception("Unable to retrieve menu from URL. ({})".format(url))
 
@@ -314,10 +340,11 @@ class lunchScraper(object):
     @staticmethod
     def clean(string):
         return "".join([char for char in string if char.isalnum() or char == " "])
-    
+
     @staticmethod
     def trim_junk(text):
         def find_last_letter(text):
+            last_letter = 0
             for i, letter in enumerate(text):
                 if letter.isalpha():
                     last_letter = i + 1
