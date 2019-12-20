@@ -52,21 +52,26 @@ class lunchScraper(object):
 
         print("[{}] Fetching menu for {}".format(id, name.ljust(30)), end="")
         try:
+
+            # Get the raw menu from URL
             text_raw = self.scrape_menu( url, selector, javascript=javascript)
 
+            # Convert raw text to a list
             text_list = self.convert_to_list( text_raw, n)
 
             # Checks if menu is for more days, extracts today's menu.
             text_menu = self.get_today_items( text_list)
 
             # Remove any short list items (i.e. prices)
-            text_menu = [ self.trim_junk(t).capitalize() for t in text_menu if len(t) > 6]
+            # Trim non alpha values from start and end of string
+            # Capitalize each list item
+            count_letters = lambda x: len( [char for char in x if char.isalpha() ] )
+            text_menu = [ self.trim_junk(t).capitalize() for t in text_menu if count_letters(t) > 5]
 
             # Remove duplicates
             text_menu = list( set( text_menu ) )
 
             # Translate to Czech / English
-            # target_language = 'cs' if language == 'en' else 'en'
 
             if not text_menu:
                 raise Exception("No data returned.")
@@ -87,14 +92,14 @@ class lunchScraper(object):
 
         except Exception as e:
             print("Couldn't get menu for {}. Error: {}".format(name, e))
-            # print('-'*60)
-            # traceback.print_exc(file=sys.stdout)
-            # print('-'*60)
+            print('-'*60)
+            traceback.print_exc(file=sys.stdout)
+            print('-'*60)
 
             # Dummy values on failure
-            text_menu = ["Nepodařilo se setřít menu :("]
-            text_menu_cs = ["Nepodařilo se setřít menu :("]
-            text_menu_en = ["Could not scrape menu :("]
+            text_menu = ["Menu not found."]
+            text_menu_cs = ["Menu nenalezeno."]
+            text_menu_en = ["Couldn't find menu."]
 
         finally:
             self.menus.append(
@@ -154,6 +159,7 @@ class lunchScraper(object):
 
         return text
 
+    # Trim string on both ends - can it be replaced by the trim_junk function??
     @staticmethod
     def trim(txt):
 

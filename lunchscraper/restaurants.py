@@ -126,6 +126,25 @@ def scrape(temp, i):
         selector = '.dropdown ~ div[class$="PoledniMenu"] > div'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=True)
 
+    if not i or i == 12:
+        # Smichovna
+        id = 12
+        name = "Smíchovna"
+        language = "cs"
+        url = "https://www.smichovna.cz"
+        selector = '#menudaily table span'
+        temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
+
+
+    if not i or i == 13:
+        # Smichovna
+        id = 13
+        name = "The Pub"
+        language = "cs"
+        url = "https://www.thepub.cz/praha-5/?lng=cs"
+        selector = '.menu-today-data ol'
+        temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
+
     # if not i or i == 12 and False:
     #     # U Kroka
     #     id = 12
