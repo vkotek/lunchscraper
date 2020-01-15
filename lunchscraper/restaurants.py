@@ -1,5 +1,3 @@
-### This is probably the best way to tackle this, and then have another file import this and iterate over the functions in it? To be tested.
-
 from datetime import datetime
 
 def scrape(temp, i):
@@ -135,7 +133,6 @@ def scrape(temp, i):
         selector = '#menudaily table span'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
-
     if not i or i == 13:
         # Smichovna
         id = 13
@@ -144,6 +141,16 @@ def scrape(temp, i):
         url = "https://www.thepub.cz/praha-5/?lng=cs"
         selector = '.menu-today-data ol'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
+
+    if not i or i == 14:
+        # Smichovna
+        id = 14
+        name = "Corleone"
+        language = "cs"
+        url = "https://www.corleone.cz/pizzeria-andel/obedova-nabidka"
+        selector = ".restaurant-menuweek th, .restaurant-menuweek td"
+        temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
+
 
     # if not i or i == 12 and False:
     #     # U Kroka
