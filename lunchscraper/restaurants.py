@@ -134,7 +134,7 @@ def scrape(temp, i):
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
     if not i or i == 13:
-        # Smichovna
+        # The Pub
         id = 13
         name = "The Pub"
         language = "cs"
@@ -143,7 +143,7 @@ def scrape(temp, i):
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
     if not i or i == 14:
-        # Smichovna
+        # Corleone
         id = 14
         name = "Corleone"
         language = "cs"
