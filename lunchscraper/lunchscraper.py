@@ -19,10 +19,10 @@ sys.path.insert(0,'..')
 
 try:
     import settings as SETTINGS
-    import controller, translator, restaurants
+    import controller, translator, restaurants, scraper
 except:
     from lunchscraper import settings as SETTINGS
-    from lunchscraper import controller, translator, restaurants
+    from lunchscraper import controller, translator, restaurants, scraper
 
 # SUBSCRIBERS = os.path.abspath(SETTINGS.SUBSCRIBERS)
 
@@ -32,7 +32,7 @@ class lunchScraper(object):
         self.menus = []
         self.settings = SETTINGS
 
-    def add_menu(self, id, language, name, url, selector, n=0, javascript=False):
+    def add_menu(self, id, language, name, url, selector, n=0, javascript=False, facebook=False):
         """
         id          :: id of the restaurant, used for grouping and hiding restaurants.
         name        :: name of the restaurant
@@ -53,11 +53,17 @@ class lunchScraper(object):
         print("[{}] Fetching menu for {}".format(id, name.ljust(30)), end="")
         try:
 
-            # Get the raw menu from URL
-            text_raw = self.scrape_menu( url, selector, javascript=javascript)
+            if facebook == True:
+                soup = scraper.get_html_javascript(url)
+                posts = scraper.get_facebook_posts(soup)
+                post = scraper.find_menu_post(posts)
+                text_list = post
+            else:
+                # Get the raw menu from URL
+                text_raw = self.scrape_menu( url, selector, javascript=javascript)
 
-            # Convert raw text to a list
-            text_list = self.convert_to_list( text_raw, n)
+                # Convert raw text to a list
+                text_list = self.convert_to_list( text_raw, n)
 
             # Checks if menu is for more days, extracts today's menu.
             text_menu = self.get_today_items( text_list)
@@ -66,7 +72,7 @@ class lunchScraper(object):
             # Trim non alpha values from start and end of string
             # Capitalize each list item
             count_letters = lambda x: len( [char for char in x if char.isalpha() ] )
-            text_menu = [ self.trim_junk(t).capitalize() for t in text_menu if count_letters(t) > 5]
+            text_menu = [ self.trim(t).capitalize() for t in text_menu if count_letters(t) > 5]
 
             # Remove duplicates
             text_menu = list( set( text_menu ) )
@@ -92,9 +98,9 @@ class lunchScraper(object):
 
         except Exception as e:
             print("Couldn't get menu for {}. Error: {}".format(name, e))
-            print('-'*60)
-            traceback.print_exc(file=sys.stdout)
-            print('-'*60)
+            # print('-'*60)
+            # traceback.print_exc(file=sys.stdout)
+            # print('-'*60)
 
             # Dummy values on failure
             text_menu = ["Menu not found."]
@@ -155,7 +161,7 @@ class lunchScraper(object):
             text = str(text).replace("<br/>", "\n")
             text = bs(text, 'lxml').get_text()
 
-        text = [ self.trim(t) for t in text.split("\n") if len(t) > 0]
+        text = [ t for t in text.split("\n") if len(t) > 0]
 
         return text
 

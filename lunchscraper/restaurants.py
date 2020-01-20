@@ -2,14 +2,23 @@ from datetime import datetime
 
 def scrape(temp, i):
 
+    # if not i or i == 1:
+    #     # Pastva
+    #     id = 1
+    #     name = "Pastva"
+    #     language = "cs"
+    #     url = "https://www.pastva-restaurant.cz/nase-menu/"
+    #     selector = "#cff .cff-text"
+    #     temp.add_menu(id, language, name, url, selector)
+
     if not i or i == 1:
         # Pastva
         id = 1
         name = "Pastva"
         language = "cs"
-        url = "https://www.pastva-restaurant.cz/nase-menu/"
-        selector = "#cff .cff-text"
-        temp.add_menu(id, language, name, url, selector)
+        url = "https://www.facebook.com/Pastva%20/"
+        # selector = "#cff .cff-text"
+        temp.add_menu(id, language, name, url, selector=None, facebook=True)
 
     if not i or i == 2:
         # Sodexo
