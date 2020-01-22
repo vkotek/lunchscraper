@@ -17,7 +17,8 @@ def scrape(temp, i):
         name = "Pastva"
         language = "cs"
         url = "https://www.facebook.com/Pastva%20/"
-        # selector = "#cff .cff-text"
+        google_maps = "https://goo.gl/maps/UBEjpU1Dez3roc7a7"
+        facebook = "https://www.facebook.com/Pastva%20/"
         temp.add_menu(id, language, name, url, selector=None, facebook=True)
 
     if not i or i == 2:
