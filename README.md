@@ -9,10 +9,13 @@ This code is created and managed by Vojtech Kotek. Suggestions for improvements 
 
 ## Changelog
 
-### 2019-10-XX v1.7 [IN PROGRESS]
+### 2019-10-XX v2.0 [IN PROGRESS]
 - Allow subscribers to define the order of menus on the preference page.
 
-### 2019-10-21 v1.6 [MASTER]
+### 2019-10-21 v1.5.2 [MASTER]
+- Added Facebook page scraping!
+
+### 2019-10-21 v1.5.1
 - When a menu cannot be retrieved, the restaurant still appears in the email with a message.
 - Added Selenium and headless Chrome to support scraping of JavaScript rendered websites.
 
