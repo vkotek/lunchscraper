@@ -30,4 +30,7 @@ def get_facebook_posts(soup):
 
 def find_menu_post(posts):
     # Currently returns first post and splits into list
+    for post in posts:
+        if 'menu' in post:
+            return post.split("\n")
     return posts[0].split("\n")
