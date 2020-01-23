@@ -348,7 +348,8 @@
                           <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:separate !important;">
                             <tr>
                               <td class="mini-block">
-                                <span class="header-sm"><a href="{{ menu.url }}">{{ menu.name }}</a></span><br />
+                                <span class="header-sm"><a href="{{ menu.url }}">{{ menu.name }}</a>
+                                {% if menu.location %}  <a href="{{ menu.location }}"><img src="https://img.icons8.com/office/16/000000/marker.png"></a>{% endif %}</span><br />
                                   <ul>
                                     {% for item in menu['menu'] %}
                                       <li>{{ item }}</li>

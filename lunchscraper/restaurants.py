@@ -17,7 +17,7 @@ def scrape(temp, i):
         name = "Pastva"
         language = "cs"
         url = "https://www.facebook.com/Pastva%20/"
-        google_maps = "https://goo.gl/maps/UBEjpU1Dez3roc7a7"
+        location = "https://goo.gl/maps/UBEjpU1Dez3roc7a7"
         facebook = "https://www.facebook.com/Pastva%20/"
         temp.add_menu(id, language, name, url, selector=None, facebook=True)
 
@@ -38,6 +38,7 @@ def scrape(temp, i):
         name = "Dave B, Five (Week)"
         language = "cs"
         url = "https://www.daveb.cz/cs/denni-nabidka"
+        location = "https://goo.gl/maps/7Rq6NGy15TqH5VYj8"
         selector = ".article .row div"
         temp.add_menu(id, language, name, url, selector, n=1)
 
@@ -46,6 +47,7 @@ def scrape(temp, i):
         name = "Dave B, Five (Today)"
         language = "cs"
         url = "https://www.daveb.cz/cs/denni-nabidka"
+        location = "https://goo.gl/maps/7Rq6NGy15TqH5VYj8"
         selector = "#first"
         weekday = -1
         temp.add_menu(id, language, name, url, selector, n=weekday)
@@ -56,6 +58,7 @@ def scrape(temp, i):
         name = "Potrefena Husa - Na Verandach"
         language = "cs"
         url = "https://www.phnaverandach.cz/"
+        location = "https://goo.gl/maps/zgPNmN2ZgF9qxr2s8"
         selector = ".listek-out .listek #table-1 .food-title"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
@@ -65,6 +68,7 @@ def scrape(temp, i):
         name = "Lavande Restaurant - Week"
         language = "cs"
         url = "https://restaurantlavande.cz/menu/#week-menu"
+        location = "https://goo.gl/maps/2eAVbJgxv3Sguhb48"
         selector = ".week-menu__header ~ .menus .menus__menu-content h3 ~ div .food__name"
         temp.add_menu(id, language, name, url, selector, n=range(0,3))
 
@@ -74,6 +78,7 @@ def scrape(temp, i):
         name = "Lavande Restaurant - Daily"
         language = "cs"
         url = "https://restaurantlavande.cz/menu/#week-menu"
+        location = "https://goo.gl/maps/2eAVbJgxv3Sguhb48"
         weekday = datetime.today().weekday()
         weekday = weekday if weekday < 5 else 4
         n = (( weekday + 1) * 4) - 1
@@ -86,6 +91,7 @@ def scrape(temp, i):
         name = "Prostor"
         language = "cs"
         url = "http://www.prostor.je"
+        location = "https://goo.gl/maps/cXchX4Gi1FZzytrZA"
         selector = "#daily-menu ul"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
@@ -95,6 +101,7 @@ def scrape(temp, i):
         name = "Gourmet Pauza"
         language = "cs"
         url = "http://www.gourmetpauza.cz/"
+        location = "https://goo.gl/maps/XDQD61g9LVb7ARi67"
         selector = "#dish-tab-45 .stm_dish_name"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
@@ -113,6 +120,7 @@ def scrape(temp, i):
         name = "Srdcovka Gurmania"
         language = "cs"
         url = "http://www.gambrinus.cz/srdcovka/gurmania/menu#obedovemenu"
+        location = "https://goo.gl/maps/iLNzNvCyD8yrqwHj9"
         selector = "#obedovemenu .menu-list-day > *"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
@@ -122,6 +130,7 @@ def scrape(temp, i):
         name = "Tradice"
         language = "cs"
         url = "http://tradiceandel.cz/cz/denni-nabidka/"
+        location = "https://goo.gl/maps/1HQBJshEqWWaHJT9A"
         selector = ".content.menu"
         temp.add_menu(id, language, name, url, selector, n=-1)
 
@@ -131,6 +140,7 @@ def scrape(temp, i):
         name = "Eaternia"
         language = "cs"
         url = "https://www.eterniasmichov.com/eaternia-jidelna"
+        location = "https://g.page/EATERNIA?share"
         selector = '.dropdown ~ div[class$="PoledniMenu"] > div'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=True)
 
@@ -140,6 +150,7 @@ def scrape(temp, i):
         name = "Smíchovna"
         language = "cs"
         url = "https://www.smichovna.cz"
+        location = "https://goo.gl/maps/Guc9Ud835FCNDJ34A"
         selector = '#menudaily table span'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
@@ -149,6 +160,7 @@ def scrape(temp, i):
         name = "The Pub"
         language = "cs"
         url = "https://www.thepub.cz/praha-5/?lng=cs"
+        location = "https://goo.gl/maps/GTKuFA52RVPSiYSc9"
         selector = '.menu-today-data ol'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
@@ -158,13 +170,14 @@ def scrape(temp, i):
         name = "Corleone"
         language = "cs"
         url = "https://www.corleone.cz/pizzeria-andel/obedova-nabidka"
+        location = "https://goo.gl/maps/iKZHEXFfGcXNbsNL6"
         selector = ".restaurant-menuweek th, .restaurant-menuweek td"
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False)
 
 
-    # if not i or i == 12 and False:
+    # if not i or i == 15:
     #     # U Kroka
-    #     id = 12
+    #     id = 15
     #     name = "U Kroka"
     #     language = "cs"
     #     url = "https://www.ukroka.cz/menus-1"
