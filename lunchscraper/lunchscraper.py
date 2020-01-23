@@ -32,7 +32,7 @@ class lunchScraper(object):
         self.menus = []
         self.settings = SETTINGS
 
-    def add_menu(self, id, language, name, url, selector, n=0, javascript=False, facebook=False):
+    def add_menu(self, id, language, name, url, selector, n=0, javascript=False, facebook=False, location=None):
         """
         id          :: id of the restaurant, used for grouping and hiding restaurants.
         name        :: name of the restaurant
@@ -113,6 +113,7 @@ class lunchScraper(object):
                     'id':id,
                     'name':name,
                     'url':url,
+                    'location': location,
                     'menu':text_menu,
                     'menu_cs': text_menu_cs,
                     'menu_en': text_menu_en,
