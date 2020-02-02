@@ -213,14 +213,28 @@ class lunchScraper(object):
                 print( "Sending email to {}".format(recipient['email'].ljust(40, ".") ), end="")
 
                 # Get menus for preferences of given user
-                menus = [r for r in self.menus if str(r['id']) in recipient['preferences']]
+                foo = [r for r in self.menus if str(r['id']) in recipient['preferences']]
+
+                def get_menus():
+                    userMenu = []
+                    for preference in recipient['preferences']:
+                        for menu in self.menus:
+                            if str(menu['id']) == preference:
+                                userMenu.append( menu )
+                                continue
+                    return userMenu
+                
+                userMenus = get_menus()
+                print(userMenus)
+                
+                # for each user preferences, get the corresponding 
 
                 # Define language so it corresponds to dictionary keys of languages in menu dict
                 if recipient['language'] in ['cs', 'en']: # Check if language is set for user.
                     language = str('menu_' + recipient['language'])
                 else: # Use original menu language
                     language = 'menu'
-                for menu in menus:
+                for menu in userMenus:
                     menu['menu'] = menu[language]
 
                 data = {
@@ -230,7 +244,7 @@ class lunchScraper(object):
                         'email': recipient['email'],
                         'url': SETTINGS.URL + "/edit?token=" + recipient['token'],
                     },
-                    'menus': menus,
+                    'menus': userMenus,
                     'language': language,
                 }
 

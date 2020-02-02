@@ -2,15 +2,6 @@ from datetime import datetime
 
 def scrape(temp, i):
 
-    # if not i or i == 1:
-    #     # Pastva
-    #     id = 1
-    #     name = "Pastva"
-    #     language = "cs"
-    #     url = "https://www.pastva-restaurant.cz/nase-menu/"
-    #     selector = "#cff .cff-text"
-    #     temp.add_menu(id, language, name, url, selector)
-
     if not i or i == 1:
         # Pastva
         id = 1
@@ -173,6 +164,18 @@ def scrape(temp, i):
         url = "https://www.corleone.cz/pizzeria-andel/obedova-nabidka"
         location = "https://goo.gl/maps/iKZHEXFfGcXNbsNL6"
         selector = ".restaurant-menuweek th, .restaurant-menuweek td"
+        temp.add_menu(id, language, name, url, selector, n=-1, javascript=False, location=location)
+
+    if not i or i == 15:
+        # Plzenska Restaurace Andel
+        id = 15
+        name = "Plzeňský restaurant Anděl"
+        language = "cs"
+        url = "https://www.restauraceandel.cz/"
+        location = "https://goo.gl/maps/Wt4SnL1tnAFaAjJb9"  
+        weekday = datetime.today().weekday() + 1
+        weekday = weekday if weekday < 5 else 5
+        selector = "#denni .tab-content div:nth-of-type({weekday}) table:nth-of-type(n+2) tr td:nth-of-type(2)".format(weekday=weekday)
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False, location=location)
 
 

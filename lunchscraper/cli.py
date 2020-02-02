@@ -3,6 +3,7 @@ import click
 import sys
 from datetime import datetime
 import dateutil.parser
+import json
 
 # Local imports
 sys.path.insert(0,'..')
@@ -21,7 +22,8 @@ def main():
 
 @main.command()
 @click.argument('email')
-def test(email):
+@click.option('--saved', '-s', is_flag=True) # TODO: Implement getting menu from json
+def test(email, saved):
     click.echo("Sending test email to {}".format(email))
     ls = lunchscraper.lunchScraper()
     ls.scrape_restaurants()
@@ -66,8 +68,10 @@ def scrape(id, save):
     if save:
         temp.save_menu()
         click.echo("Menu saved to file.")
+        
+    json_menu = json.dumps(temp.menus)
 
-    return click.echo(temp.menus)
+    return click.echo(json_menu)
 
 @main.command()
 @click.argument('id', type=int)
