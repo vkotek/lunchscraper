@@ -81,6 +81,7 @@ DATABASES = {
         'NAME': 'd3e07f8vonn0ji',
         'USER': 'qkthgpysiithdl',
         'HOST': 'ec2-54-75-246-118.eu-west-1.compute.amazonaws.com',
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
         'PORT': 5432,
     }
 }
