@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'lunchscraper.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
+        'NAME': 'd3e07f8vonn0ji',
+        'USER': 'qkthgpysiithdl',
+        'HOST': 'ec2-54-75-246-118.eu-west-1.compute.amazonaws.com',
         'PORT': 5432,
     }
 }
