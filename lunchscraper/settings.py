@@ -27,6 +27,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'lunchscraper.herokuapp.com',
+    'lunch.kotek.co',
+    '127.0.0.1',
 ]
 
 
@@ -79,16 +81,20 @@ WSGI_APPLICATION = 'lunchscraper.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd3e07f8vonn0ji',
-        'USER': 'qkthgpysiithdl',
-        'HOST': 'ec2-54-75-246-118.eu-west-1.compute.amazonaws.com',
-        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
-        'PORT': 5432,
+# Try as psycopg2 can fail on dev
+try:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'd3e07f8vonn0ji',
+            'USER': 'qkthgpysiithdl',
+            'HOST': 'ec2-54-75-246-118.eu-west-1.compute.amazonaws.com',
+            'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+            'PORT': 5432,
+        }
     }
-}
+except:
+    pass
 
 
 # Password validation
@@ -129,3 +135,9 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 STATIC_URL = '/static/'
+
+# Import development settings
+try:
+    from local_settings import *
+except ImportError as e:
+    pass
