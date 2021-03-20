@@ -15,7 +15,7 @@ googleapis-common-protos==1.6.0
 grpcio==1.23.0
 idna==2.8
 importlib-metadata==0.18
-Jinja2==2.10.1
+Jinja2==2.11.3
 -e git+https://github.com/vkotek/lunchScraper@5f80649b0355fa73d6ada2c021e95925d16d4d74#egg=LUNCHSCRAPER
 lxml==4.3.3
 MarkupSafe==1.1.1
