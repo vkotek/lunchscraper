@@ -1,12 +1,8 @@
-// Jenkinsfile (Declarative Pipeline)
 pipeline {
-    
-    agent any 
-
+    agent any
     parameters {
-        booleanParam(name:'executeTests', 'defaultValue': true, description: 'uncheck to skip tests.')
+        booleanParam(name:'skipTests', 'defaultValue': false, description: 'FUCK IT, WE WILL DO IT LIVE!!')
     }
-    
     stages {
         stage('build') {
             steps {
@@ -14,11 +10,20 @@ pipeline {
                 sh 'python --version'
             }
         }
+        stage('test') {
+            steps {
+                echo 'Testing app...'
+            }
+        }
         stage('deploy') {
             steps {
                 echo 'Deploying app...'
-                sh 'python --version'
             }
+        }
+    }
+    post {
+        success {
+            echo 'Successfuly deployed.'
         }
     }
 }
