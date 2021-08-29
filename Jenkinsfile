@@ -11,6 +11,11 @@ pipeline {
             }
         }
         stage('test') {
+            when {
+                expression {
+                    params.skipTests == false
+                }
+            }
             steps {
                 echo 'Testing app...'
             }
@@ -24,6 +29,8 @@ pipeline {
     post {
         success {
             echo 'Successfuly deployed.'
+            telegramSend "Successfuly deployed ${JOB_NAME} build #${BUILD_NUMBER} \
+            branch ${BRANCH_NAME}. For more details see ${BUILD_URL}"
         }
     }
 }
