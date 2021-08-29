@@ -2,4 +2,4 @@
 
 cd "${0%/*}"
 
-$HOME/scripts/lunchScraper/venv/bin/python $HOME/scripts/lunchScraper/lunchscraper
+$PWD/venv/bin/python $PWD/lunchscraper

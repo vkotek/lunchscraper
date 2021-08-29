@@ -11,7 +11,7 @@ try:
 except:
     from lunchscraper import lunchscraper
 
-
+# Run the program
 print("[{}] Execution started".format(datetime.now()) )
 x = lunchscraper.lunchScraper()
 x.scrape_restaurants()

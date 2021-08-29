@@ -10,8 +10,10 @@ import os, sys
 from jinja2 import Template
 
 # Local imports
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
-sys.path.insert(0,'..')
+#sys.path.insert(1, os.path.join(sys.path[0], '..'))
+#sys.path.insert(0,'..')
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 try:
     import settings as SETTINGS
@@ -20,21 +22,20 @@ except:
     from lunchscraper import controller, translator
     from lunchscraper import settings as SETTINGS
 
+subscribers_file = dir_path + '/data/subscribers.json'
+menu_file = dir_path + '/data/menu.json'
+restaurants_file = dir_path + '/data/restaurants.json'
+notices_file = dir_path + '/data/notices.json'
+
 class User(object):
 
     def __init__(self, file=None):
 
-        if file:
-            self.subscribers_file = file
-        else:
-            self.subscribers_file = SETTINGS.SUBSCRIBERS
-
-        with open(self.subscribers_file, 'r+') as f:
+        with open(subscribers_file, 'w+') as f:
             try:
                 self.users = json.load(f)
             except Exception as e:
                 self.users = []
-                self.save()
 
     def reload(self):
         self.__init__()
@@ -82,7 +83,7 @@ class User(object):
         return self.get(email=email)['preferences']
 
     def save(self):
-        with open(self.subscribers_file, 'w') as f:
+        with open( subscribers_file, 'w') as f:
             json.dump(self.users, f)
         self.reload()
         return True
@@ -169,7 +170,7 @@ class User(object):
 
     def clear(self):
         """Deletes all subscribers from the database."""
-        with open(self.subscribers_file, 'w') as f:
+        with open( subscribers_file, 'w') as f:
             f.write("")
         self.reload()
 
@@ -192,7 +193,7 @@ class User(object):
 class Restaurants(object):
 
     def __init__(self):
-        with open("data/restaurants.json", "r") as f:
+        with open( restaurants_file, "w") as f:
             self.restaurants =  json.load(f)
 
     def restaurants(self):
@@ -249,7 +250,7 @@ class Email(object):
             date = datetime.strftime(datetime.today(), "%Y-%m-%d")
 
         try:
-            with open("data/notices.json", 'r+') as f:
+            with open( notices_file, 'w+') as f:
                 notices = json.load(f)
                 for notice in notices:
                     if notice['date'] == date:
@@ -269,7 +270,7 @@ class Email(object):
             raise Exception("Incorrect notice format, must be dict.")
 
         # try:
-        with open("data/notices.json", "w") as f:
+        with open( notices_file, "w") as f:
             try:
                 notices = json.loads(f)
             except:
@@ -286,11 +287,7 @@ class Menu(object):
 
     @staticmethod
     def get():
-        try:
-            menu_json = path + "/data/menu.json"
-        except:
-            menu_json = "data/menu.json"
 
-        with open(menu_json, "r") as f:
+        with open( menu_file, "w") as f:
             data = json.load(f)
         return data
