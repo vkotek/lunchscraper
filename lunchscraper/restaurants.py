@@ -133,7 +133,7 @@ def scrape(temp, i):
         language = "cs"
         url = "https://www.eterniasmichov.com/eaternia-jidelna"
         location = "https://g.page/EATERNIA?share"
-        selector = '.dropdown ~ div[class$="PoledniMenu"] > div'
+        selector = 'div.dropdown ~ div div'
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=True, location=location)
 
     if not i or i == 12:
@@ -178,7 +178,17 @@ def scrape(temp, i):
         selector = "#denni .tab-content div:nth-of-type({weekday}) table:nth-of-type(n+2) tr td:nth-of-type(2)".format(weekday=weekday)
         temp.add_menu(id, language, name, url, selector, n=-1, javascript=False, location=location)
 
-
+    if not i or i == 16:
+        # Polévkárna v Plavecké
+        id = 16
+        name = "Polévkárna v Plavecké"
+        language = "cs"
+        url = "http://www.plaveckapolevka.cz/"
+        location = "https://goo.gl/maps/apxFi1SiRT93gNB18"  
+        selector = "#content .entry-content"
+        temp.add_menu(id, language, name, url, selector, n=1, javascript=False, location=location)
+        
+        
     # if not i or i == 15:
     #     # U Kroka
     #     id = 15

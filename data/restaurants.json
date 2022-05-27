@@ -1,62 +1,82 @@
 [
   {
     "id": 1,
-    "name": "Pastva"
+    "name": "Pastva",
+    "active": true
   },
   {
     "id": 2,
-    "name": "Sodexo, Riverview"
+    "name": "Sodexo, Riverview",
+    "active": false
   },
   {
     "id": 3,
-    "name": "Dave B, Five"
+    "name": "Dave B, Five",
+    "active": false
   },
   {
     "id": 4,
-    "name": "Potrefena Husa - Na Verandach"
+    "name": "Potrefena Husa - Na Verandach",
+    "active": true
   },
   {
     "id": 5,
-    "name": "Lavande Restaurant"
+    "name": "Lavande Restaurant",
+    "active": true
   },
   {
     "id": 6,
-    "name": "Prostor"
+    "name": "Prostor",
+    "active": true
   },
   {
     "id": 7,
-    "name": "Gourmet Pauza"
+    "name": "Gourmet Pauza",
+    "active": true
   },
   {
     "id": 8,
-    "name": "Erpet Golf Centrum"
+    "name": "Erpet Golf Centrum",
+    "active": false
   },
   {
     "id": 9,
-    "name": "Srdcovka Gurmania"
+    "name": "Srdcovka Gurmania",
+    "active": true
   },
   {
     "id": 10,
-    "name": "Tradice"
+    "name": "Tradice",
+    "active": true
   },
   {
     "id": 11,
-    "name": "Eaternia"
+    "name": "Eaternia",
+    "active": true
   },
   {
     "id": 12,
-    "name": "Smíchovna"
+    "name": "Smíchovna",
+    "active": true
   },
   {
     "id": 13,
-    "name": "The Pub"
+    "name": "The Pub",
+    "active": false
   },
   {
     "id": 14,
-    "name": "Corleone"
+    "name": "Corleone",
+    "active": true
   },
   {
     "id": 15,
-    "name": "Plzeňský restaurant Anděl"
+    "name": "Plzeňský restaurant Anděl",
+    "active": true
+  },
+  {
+    "id": 16,
+    "name": "Polévkárna v Plavecké",
+    "active": true
   }
 ]

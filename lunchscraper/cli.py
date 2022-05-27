@@ -125,5 +125,21 @@ def resend_verification(email):
 def saved_menu():
     return click.echo(controller.Menu.get())
 
+@main.command()
+def restaurants():
+
+    restaurants = controller.Restaurants().restaurants
+    
+    click.echo(restaurants)
+
+    click.echo("There are {} restaurants.".format(len(restaurants)) )
+    
+    for restaurant in restaurants:
+        click.echo("{} | {}".format(
+            str(restaurant['id']).rjust(3," "),
+            restaurant['name'].ljust(22)
+        ))
+
+
 if __name__ == '__main__':
     main()
