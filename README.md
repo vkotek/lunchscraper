@@ -3,8 +3,18 @@
 Collects daily menu information from nearby restaurants and delivers it to your email every day at 11:00.
 
 Sign up on https://web.kotek.co/lunch-scraper.
+Or view the menu directly at https://web.kotek.co/lunch-scraper/menu
 
 This code is created and managed by Vojtech Kotek. Suggestions for improvements are welcome.
+
+## Minimal Customizable View (JIRA Friendly)
+You can customize the direct menu view and make it embed-friendly.
+- Root URL: https://web.kotek.co/lunch-scraper/menu
+- ?compact=1 (makes view more compact, removes header/footer and margins)
+- ?id=1,3,2 (id of the restaurants to show, in desired order)
+- ?language={en,cs} (displays only the desired language to save space)
+
+Example: https://web.kotek.co/lunch-scraper/menu?compact=1&language=en&id=11,1,15
 
 
 ## Changelog
