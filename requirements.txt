@@ -5,7 +5,7 @@ boto3==1.16.63
 botocore==1.19.63
 bs4==0.0.1
 cachetools==3.1.1
-certifi==2019.3.9
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 google-auth==1.6.3
