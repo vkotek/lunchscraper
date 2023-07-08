@@ -13,7 +13,6 @@ google-cloud==0.34.0
 google-cloud-core==1.0.3
 google-cloud-translate==1.6.0
 googleapis-common-protos==1.6.0
-grpcio==1.23.0
 idna==2.8
 importlib-metadata==0.18
 Jinja2==2.10.1
